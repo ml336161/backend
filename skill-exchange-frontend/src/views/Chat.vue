@@ -38,7 +38,11 @@
             <div class="chat-messages" v-if="selectedUserId">
               <div v-for="msg in messages" :key="msg.id" 
                    :class="['message', msg.fromUserId === userStore.userId ? 'me' : 'other']">
-                <el-avatar :src="getUserAvatar(msg.fromUserId)">
+                <el-avatar 
+                  :src="getUserAvatar(msg.fromUserId)"
+                  @click="goToFriendProfile(msg.fromUserId)"
+                  class="clickable-avatar"
+                >
                   {{ getUserNickname(msg.fromUserId)?.charAt(0) }}
                 </el-avatar>
                 <div class="message-bubble">
@@ -75,7 +79,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import Header from '../components/Header.vue'
 import { getFriends } from '../api/friend'
@@ -84,6 +88,7 @@ import { formatTimeAgo } from '../utils/format'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
 
 const friends = ref([])
@@ -174,6 +179,12 @@ const getUnreadCount = (userId) => {
 
 const formatTime = (time) => {
   return formatTimeAgo(time)
+}
+
+const goToFriendProfile = (userId) => {
+  if (userId !== userStore.userId) {
+    router.push(`/profile/${userId}`)
+  }
 }
 
 onMounted(() => {
@@ -280,6 +291,10 @@ onMounted(() => {
 .message-bubble .time {
   font-size: 11px;
   opacity: 0.7;
+}
+
+.clickable-avatar {
+  cursor: pointer;
 }
 
 .no-chat {

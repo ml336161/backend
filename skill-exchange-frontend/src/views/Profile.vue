@@ -175,7 +175,7 @@
             </el-avatar>
             <el-upload
               class="avatar-uploader"
-              action="/api/upload"
+              action="http://localhost:8080/api/upload"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
@@ -420,10 +420,12 @@ const handleChangePassword = async () => {
   }
 }
 
-const handleAvatarSuccess = (response) => {
+const handleAvatarSuccess = async (response) => {
   if (response.code === 200) {
     editForm.avatar = 'http://localhost:8080' + response.data
     ElMessage.success('头像上传成功')
+    await userStore.refreshUser()
+    await loadProfile()
   } else {
     ElMessage.error('头像上传失败')
   }
