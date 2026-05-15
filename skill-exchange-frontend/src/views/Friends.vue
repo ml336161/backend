@@ -50,11 +50,16 @@
             </template>
             <div class="friends-list">
               <div v-for="friend in friends" :key="friend.friendUserId" class="friend-item">
-                <div class="friend-info" @click="$router.push('/chat/' + friend.friendUserId)">
-                  <el-avatar :size="50" :src="friend.friendUser?.avatar">
+                <div class="friend-info">
+                  <el-avatar 
+                    :size="50" 
+                    :src="friend.friendUser?.avatar"
+                    @click="$router.push('/profile/friend/' + friend.friendUserId)"
+                    class="clickable-avatar"
+                  >
                     {{ friend.friendUser?.nickname?.charAt(0) }}
                   </el-avatar>
-                  <div class="friend-detail">
+                  <div class="friend-detail" @click="$router.push('/chat/' + friend.friendUserId)">
                     <span class="name">{{ friend.friendUser?.nickname }}</span>
                     <span class="time">{{ formatTime(friend.createTime) }}</span>
                   </div>
@@ -253,6 +258,10 @@ onMounted(() => {
 .friend-detail .time {
   font-size: 12px;
   color: #999;
+}
+
+.clickable-avatar {
+  cursor: pointer;
 }
 
 .search-result {

@@ -14,7 +14,11 @@
                    class="chat-item"
                    :class="{ active: selectedUserId === friend.friendUserId }"
                    @click="selectChat(friend.friendUserId)">
-                <el-avatar :src="friend.friendUser?.avatar">
+                <el-avatar 
+                  :src="friend.friendUser?.avatar"
+                  @click.stop="goToFriendProfile(friend.friendUserId)"
+                  class="clickable-avatar"
+                >
                   {{ friend.friendUser?.nickname?.charAt(0) }}
                 </el-avatar>
                 <div class="chat-info">
@@ -182,9 +186,30 @@ const formatTime = (time) => {
 }
 
 const goToFriendProfile = (userId) => {
-  if (userId !== userStore.userId) {
-    router.push(`/profile/friend/${userId}`)
+  console.log('点击头像，userId:', userId, '当前用户:', userStore.userId)
+  
+  // 确保 userId 是有效的
+  if (!userId) {
+    console.log('userId 无效，不跳转')
+    return
   }
+  
+  // 将两个 ID 都转换为数字进行比较
+  const clickedUserId = parseInt(userId)
+  const currentUserId = parseInt(userStore.userId)
+  
+  console.log('转换后 - clickedUserId:', clickedUserId, 'currentUserId:', currentUserId)
+  
+  // 如果点击的是自己的头像，跳转到个人资料页
+  if (clickedUserId === currentUserId) {
+    console.log('点击的是自己的头像，跳转到个人资料页')
+    router.push('/profile')
+    return
+  }
+  
+  // 点击的是好友头像，跳转到好友资料页
+  console.log('跳转到好友资料页:', `/profile/friend/${userId}`)
+  router.push(`/profile/friend/${userId}`)
 }
 
 onMounted(() => {
