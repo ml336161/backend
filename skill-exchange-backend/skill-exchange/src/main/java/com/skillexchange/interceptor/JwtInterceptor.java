@@ -66,6 +66,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                 uri.equals("/api/skill-types") ||
                 uri.equals("/api/skill-types/active") ||
                 uri.startsWith("/api/skill-types/") ||
+                uri.startsWith("/api/comments/skill/") ||
                 uri.startsWith("/api/upload/") ||
                 uri.startsWith("/upload/");
     }
