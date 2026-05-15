@@ -31,6 +31,7 @@
     <update id="update" parameterType="com.skillexchange.entity.User">
         UPDATE user
         <set>
+            <if test="username != null">username = #{username},</if>
             <if test="nickname != null">nickname = #{nickname},</if>
             <if test="avatar != null">avatar = #{avatar},</if>
             <if test="email != null">email = #{email},</if>
