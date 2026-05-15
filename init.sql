@@ -305,14 +305,14 @@ CREATE TABLE `feedback` (
 
 -- 插入管理员用户
 INSERT INTO `user` (`username`, `password`, `nickname`, `avatar`, `email`, `phone`, `role`, `time_coin`, `credit_score`, `status`) VALUES
-('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '超级管理员', '/uploads/avatar/admin.png', 'admin@skill.com', '13800138000', 'admin', 999, 100, 1);
+('admin', '123456', '超级管理员', '/uploads/avatar/admin.png', 'admin@skill.com', '13800138000', 'admin', 999, 100, 1);
 
 -- 插入普通用户
 INSERT INTO `user` (`username`, `password`, `nickname`, `avatar`, `email`, `phone`, `role`, `time_coin`, `credit_score`, `status`) VALUES
-('zhangsan', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '张三', '/uploads/avatar/zhangsan.png', 'zhangsan@skill.com', '13800138001', 'user', 5, 85, 1),
-('lisi', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '李四', '/uploads/avatar/lisi.png', 'lisi@skill.com', '13800138002', 'user', 3, 78, 1),
-('wangwu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '王五', '/uploads/avatar/wangwu.png', 'wangwu@skill.com', '13800138003', 'user', 8, 92, 1),
-('zhaoliu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '赵六', '/uploads/avatar/zhaoliu.png', 'zhaoliu@skill.com', '13800138004', 'user', 2, 75, 1);
+('zhangsan', '123456', '张三', '/uploads/avatar/zhangsan.png', 'zhangsan@skill.com', '13800138001', 'user', 5, 85, 1),
+('lisi', '123456', '李四', '/uploads/avatar/lisi.png', 'lisi@skill.com', '13800138002', 'user', 3, 78, 1),
+('wangwu', '123456', '王五', '/uploads/avatar/wangwu.png', 'wangwu@skill.com', '13800138003', 'user', 8, 92, 1),
+('zhaoliu', '123456', '赵六', '/uploads/avatar/zhaoliu.png', 'zhaoliu@skill.com', '13800138004', 'user', 2, 75, 1);
 
 -- 插入技能类型
 INSERT INTO `skill_type` (`name`, `description`, `icon`, `sort`, `status`) VALUES
