@@ -10,11 +10,11 @@
         
         <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
           <el-form-item label="反馈类型" prop="type">
-           <el-radio-group v-model="form.type">
-             <el-radio :label-value="'bug'">问题反馈</el-radio>
-             <el-radio :label-value="'feature'">功能建议</el-radio>
-             <el-radio :label-value="'other'">其他</el-radio>
-           </el-radio-group>
+            <el-radio-group v-model="form.type">
+              <el-radio label="bug">问题反馈</el-radio>
+              <el-radio label="feature">功能建议</el-radio>
+              <el-radio label="other">其他</el-radio>
+            </el-radio-group>
           </el-form-item>
           
           <el-form-item label="标题" prop="title">
