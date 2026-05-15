@@ -24,4 +24,6 @@ public interface FeedbackMapper {
     List<Feedback> selectByStatus(String status);
 
     int countAll();
+
+    int countPending();
 }

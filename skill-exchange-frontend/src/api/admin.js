@@ -30,3 +30,15 @@ export function getReports(status) {
 export function getFeedbacks() {
   return request.get('/admin/feedbacks')
 }
+
+export function getUsers() {
+  return request.get('/admin/users')
+}
+
+export function getSkills() {
+  return request.get('/admin/skills')
+}
+
+export function getExchanges() {
+  return request.get('/admin/exchanges')
+}

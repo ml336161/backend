@@ -15,4 +15,6 @@ public interface FeedbackService {
     List<FeedbackVO> listAll();
 
     List<FeedbackVO> listByUserId(Long userId);
+
+    int countPending();
 }

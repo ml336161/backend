@@ -53,6 +53,7 @@ public class AdminController {
         stats.put("exchangeCount", skillExchangeMapper.countAll());
         stats.put("pendingReportCount", reportMapper.countByStatus("pending"));
         stats.put("pendingExchangeCount", skillExchangeMapper.countByStatus("pending"));
+        stats.put("pendingFeedbackCount", feedbackService.countPending());
         return Result.success(stats);
     }
 
@@ -95,5 +96,23 @@ public class AdminController {
     public Result<List<FeedbackVO>> getFeedbacks() {
         List<FeedbackVO> feedbacks = feedbackService.listAll();
         return Result.success(feedbacks);
+    }
+
+    @GetMapping("/users")
+    public Result<List<UserVO>> getUsers() {
+        List<UserVO> users = userService.listAll();
+        return Result.success(users);
+    }
+
+    @GetMapping("/skills")
+    public Result<List<SkillVO>> getSkills() {
+        List<SkillVO> skills = skillService.listAll();
+        return Result.success(skills);
+    }
+
+    @GetMapping("/exchanges")
+    public Result<List<SkillExchangeVO>> getExchanges() {
+        List<SkillExchangeVO> exchanges = skillExchangeService.listAll();
+        return Result.success(exchanges);
     }
 }

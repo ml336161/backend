@@ -54,4 +54,8 @@
         SELECT COUNT(*) FROM feedback
     </select>
 
+    <select id="countPending" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM feedback WHERE reply IS NULL OR reply = ''
+    </select>
+
 </mapper>

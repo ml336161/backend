@@ -78,6 +78,11 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public int countPending() {
+        return feedbackMapper.countPending();
+    }
+
     private FeedbackVO convertToVO(Feedback feedback, User user) {
         FeedbackVO vo = new FeedbackVO();
         vo.setId(feedback.getId());
