@@ -429,7 +429,9 @@ const handleChangePassword = async () => {
 
 const handleAvatarSuccess = async (response) => {
   if (response.code === 200) {
-    editForm.avatar = 'http://localhost:8080' + response.data
+    const avatarUrl = 'http://localhost:8080' + response.data
+    editForm.avatar = avatarUrl
+    await updateUser({ avatar: avatarUrl })
     ElMessage.success('头像上传成功')
     await userStore.refreshUser()
     await loadProfile()
