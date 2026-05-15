@@ -239,7 +239,7 @@
                 <el-tag :type="row.targetType === 'user' ? 'info' : 'warning'">{{ row.targetType === 'user' ? '用户' : '技能' }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="被举报对象" min-width="180">
+            <el-table-column label="被举报对象" min-width="200">
               <template #default="{ row }">
                 <div v-if="row.targetType === 'user'" class="user-mini">
                   <el-avatar :size="32" :src="getFullUrl(row.targetUser?.avatar)">{{ row.targetUser?.nickname?.charAt(0) }}</el-avatar>
@@ -251,9 +251,17 @@
                     :src="getFirstImage(row.targetSkill.images)" 
                     :preview-src-list="row.targetSkill.images.split(',').map(img => getFullUrl(img))"
                     fit="cover"
-                    style="width: 32px; height: 32px; border-radius: 4px; margin-right: 8px;"
+                    style="width: 32px; height: 32px; border-radius: 4px; flex-shrink: 0;"
                   />
-                  <span>{{ row.targetSkill?.title }}</span>
+                  <div class="skill-title-scroll">
+                    <el-link 
+                      type="primary" 
+                      style="cursor: pointer; white-space: nowrap;"
+                      @click="goToSkillDetail(row.targetSkill?.id)"
+                    >
+                      {{ row.targetSkill?.title }}
+                    </el-link>
+                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -550,6 +558,12 @@ const viewSkillDetail = (skill) => {
   )
 }
 
+const goToSkillDetail = (skillId) => {
+  if (skillId) {
+    window.open(`/#/skills/${skillId}`, '_blank')
+  }
+}
+
 const viewExchangeDetail = (exchange) => {
   ElMessageBox.alert(
     `<div style="text-align: left">
@@ -801,6 +815,33 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  overflow: hidden;
+}
+
+.skill-title-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 160px;
+  scrollbar-width: thin;
+  scrollbar-color: #c0c4cc #f5f7fa;
+}
+
+.skill-title-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.skill-title-scroll::-webkit-scrollbar-track {
+  background: #f5f7fa;
+  border-radius: 2px;
+}
+
+.skill-title-scroll::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+  border-radius: 2px;
+}
+
+.skill-title-scroll::-webkit-scrollbar-thumb:hover {
+  background: #909399;
 }
 
 .detail-content {
