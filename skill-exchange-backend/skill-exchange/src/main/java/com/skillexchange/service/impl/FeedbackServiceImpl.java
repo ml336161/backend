@@ -27,6 +27,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private SystemMessageService systemMessageService;
+
     @Override
     @Transactional
     public FeedbackVO create(Long userId, CreateFeedbackRequest request) {
@@ -55,6 +58,10 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedbackMapper.updateReply(request.getId(), request.getReply(), LocalDateTime.now());
         feedback = feedbackMapper.selectById(request.getId());
         User user = userMapper.selectById(feedback.getUserId());
+        
+        String replyContent = "您的反馈【" + feedback.getTitle() + "】已收到回复：" + request.getReply();
+        systemMessageService.sendFeedbackReply(feedback.getUserId(), replyContent);
+        
         return convertToVO(feedback, user);
     }
 

@@ -10,6 +10,21 @@
               <span>消息</span>
             </template>
             <div class="chat-list">
+              <div class="system-chat-item"
+                   :class="{ active: selectedUserId === 'system' }"
+                   @click="goToSystemChat">
+                <div class="system-icon-wrapper">
+                  <el-icon :size="24" class="system-icon"><Bell /></el-icon>
+                </div>
+                <div class="chat-info">
+                  <span class="name">系统消息</span>
+                  <span class="preview">系统通知、反馈回复等</span>
+                </div>
+                <el-badge v-if="systemUnreadCount > 0" 
+                         :value="systemUnreadCount" 
+                         class="unread-badge" />
+              </div>
+              
               <div v-for="friend in friends" :key="friend.friendUserId" 
                    class="chat-item"
                    :class="{ active: selectedUserId === friend.friendUserId }"
@@ -88,8 +103,10 @@ import { useUserStore } from '../store/user'
 import Header from '../components/Header.vue'
 import { getFriends } from '../api/friend'
 import { getConversation, sendMessage, markAsRead } from '../api/chat'
+import { getUnreadCount as getSystemUnreadCount } from '../api/systemMessage'
 import { formatTimeAgo } from '../utils/format'
 import { ElMessage } from 'element-plus'
+import { Bell } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -102,6 +119,7 @@ const messages = ref([])
 const inputContent = ref('')
 const sending = ref(false)
 const allMessages = ref({})
+const systemUnreadCount = ref(0)
 
 const loadFriends = async () => {
   try {
@@ -212,8 +230,23 @@ const goToFriendProfile = (userId) => {
   router.push(`/profile/friend/${userId}`)
 }
 
+const goToSystemChat = () => {
+  selectedUserId.value = 'system'
+  router.push('/system-chat')
+}
+
+const loadSystemUnreadCount = async () => {
+  try {
+    const res = await getSystemUnreadCount()
+    systemUnreadCount.value = res.data || 0
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 onMounted(() => {
   loadFriends()
+  loadSystemUnreadCount()
   if (route.params.userId) {
     setTimeout(() => selectChat(parseInt(route.params.userId)), 500)
   }
