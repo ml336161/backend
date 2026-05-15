@@ -21,4 +21,6 @@ public interface SkillExchangeService {
     List<SkillExchangeVO> listSent(Long userId);
 
     Long countPending(Long userId);
+
+    List<SkillExchangeVO> listAll();
 }

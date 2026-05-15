@@ -305,6 +305,17 @@ public class SkillServiceImpl implements SkillService {
         return listUserLikes(userId);
     }
 
+    @Override
+    public List<SkillVO> listAll() {
+        List<Skill> skills = skillMapper.selectAll();
+        return skills.stream()
+                .map(skill -> {
+                    User user = userMapper.selectById(skill.getUserId());
+                    return convertToVO(skill, user, false, false);
+                })
+                .collect(Collectors.toList());
+    }
+
     private SkillVO convertToVO(Skill skill, User user, Boolean liked, Boolean collected) {
         SkillVO vo = new SkillVO();
         vo.setId(skill.getId());

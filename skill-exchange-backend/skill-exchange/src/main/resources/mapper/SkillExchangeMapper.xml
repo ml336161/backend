@@ -65,4 +65,8 @@
         SELECT COUNT(*) FROM skill_exchange
     </select>
 
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill_exchange ORDER BY create_time DESC
+    </select>
+
 </mapper>

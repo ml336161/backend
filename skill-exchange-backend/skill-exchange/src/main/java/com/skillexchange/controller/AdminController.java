@@ -37,9 +37,6 @@ public class AdminController {
     private UserMapper userMapper;
 
     @Resource
-    private SkillMapper skillMapper;
-
-    @Resource
     private ReportMapper reportMapper;
 
     @Resource

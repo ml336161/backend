@@ -49,4 +49,6 @@ public interface SkillService {
     List<SkillVO> listUserCollectsByUserId(Long userId);
 
     List<SkillVO> listUserLikesByUserId(Long userId);
+
+    List<SkillVO> listAll();
 }

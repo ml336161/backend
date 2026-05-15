@@ -198,6 +198,19 @@ public class SkillExchangeServiceImpl implements SkillExchangeService {
                 .count();
     }
 
+    @Override
+    public List<SkillExchangeVO> listAll() {
+        List<SkillExchange> exchanges = skillExchangeMapper.selectAll();
+        return exchanges.stream()
+                .map(exchange -> {
+                    Skill skill = skillMapper.selectById(exchange.getSkillId());
+                    User provider = userMapper.selectById(exchange.getProviderId());
+                    User requester = userMapper.selectById(exchange.getRequesterId());
+                    return convertToVO(exchange, skill, provider, requester);
+                })
+                .collect(Collectors.toList());
+    }
+
     private void parseAndSetScheduledTime(SkillExchange exchange, String timeStr) {
         try {
             exchange.setScheduledTime(LocalDateTime.parse(timeStr, DATE_TIME_FORMATTER));

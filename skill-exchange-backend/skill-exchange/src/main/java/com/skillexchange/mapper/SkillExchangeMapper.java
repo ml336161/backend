@@ -30,4 +30,6 @@ public interface SkillExchangeMapper {
     int countByStatus(String status);
 
     int countAll();
+
+    List<SkillExchange> selectAll();
 }
