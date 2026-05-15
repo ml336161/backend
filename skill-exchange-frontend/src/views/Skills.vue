@@ -30,6 +30,26 @@
             {{ type.name }}
           </el-menu-item>
         </el-menu>
+        
+        <el-divider />
+        
+        <h3>价格筛选</h3>
+        <div class="price-filter">
+          <el-input-number v-model="minPrice" :min="0" :max="999" placeholder="最低" style="width: 80px" />
+          <span class="price-separator">-</span>
+          <el-input-number v-model="maxPrice" :min="0" :max="999" placeholder="最高" style="width: 80px" />
+          <el-button size="small" type="primary" @click="handlePriceFilter">筛选</el-button>
+          <el-button size="small" @click="resetPriceFilter">重置</el-button>
+        </div>
+        
+        <el-divider />
+        
+        <h3>快速筛选</h3>
+        <el-tag v-for="range in priceRanges" :key="range.label" 
+          :class="{ active: selectedPriceRange === range.label }"
+          @click="selectPriceRange(range)">
+          {{ range.label }}
+        </el-tag>
       </div>
       
       <div class="skills-list">
@@ -96,6 +116,16 @@ const selectedType = ref(0)
 const pageNum = ref(1)
 const pageSize = ref(12)
 const total = ref(0)
+const minPrice = ref(null)
+const maxPrice = ref(null)
+const selectedPriceRange = ref('')
+
+const priceRanges = [
+  { label: '0-5', min: 0, max: 5 },
+  { label: '5-10', min: 5, max: 10 },
+  { label: '10-20', min: 10, max: 20 },
+  { label: '20+', min: 20, max: null }
+]
 
 const loadSkills = async () => {
   try {
@@ -103,7 +133,9 @@ const loadSkills = async () => {
       pageNum: pageNum.value,
       pageSize: pageSize.value,
       keyword: keyword.value || null,
-      typeId: selectedType.value === 0 ? null : selectedType.value
+      typeId: selectedType.value === 0 ? null : selectedType.value,
+      minPrice: minPrice.value,
+      maxPrice: maxPrice.value
     }
     const res = await getSkillList(params)
     skills.value = res.data.list || []
@@ -111,6 +143,28 @@ const loadSkills = async () => {
   } catch (err) {
     console.error(err)
   }
+}
+
+const handlePriceFilter = () => {
+  pageNum.value = 1
+  selectedPriceRange.value = ''
+  loadSkills()
+}
+
+const resetPriceFilter = () => {
+  minPrice.value = null
+  maxPrice.value = null
+  selectedPriceRange.value = ''
+  pageNum.value = 1
+  loadSkills()
+}
+
+const selectPriceRange = (range) => {
+  minPrice.value = range.min
+  maxPrice.value = range.max
+  selectedPriceRange.value = range.label
+  pageNum.value = 1
+  loadSkills()
 }
 
 const loadTypes = async () => {
@@ -169,6 +223,29 @@ onMounted(() => {
 .type-sidebar h3 {
   padding: 10px 0;
   color: #333;
+  font-size: 14px;
+}
+
+.price-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.price-separator {
+  color: #999;
+}
+
+.type-sidebar .el-tag {
+  margin-right: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.type-sidebar .el-tag.active {
+  background: #409eff;
+  color: #fff;
 }
 
 .skills-list {

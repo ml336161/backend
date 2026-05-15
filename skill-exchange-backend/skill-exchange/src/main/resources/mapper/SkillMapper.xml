@@ -75,6 +75,8 @@
         SELECT <include refid="Base_Column_List"/> FROM skill WHERE status = 1
         <if test="typeId != null">AND type_id = #{typeId}</if>
         <if test="keyword != null and keyword != ''">AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))</if>
+        <if test="minPrice != null">AND price >= #{minPrice}</if>
+        <if test="maxPrice != null">AND price <= #{maxPrice}</if>
         ORDER BY create_time DESC
         LIMIT #{offset}, #{limit}
     </select>
@@ -83,6 +85,8 @@
         SELECT COUNT(*) FROM skill WHERE status = 1
         <if test="typeId != null">AND type_id = #{typeId}</if>
         <if test="keyword != null and keyword != ''">AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))</if>
+        <if test="minPrice != null">AND price >= #{minPrice}</if>
+        <if test="maxPrice != null">AND price <= #{maxPrice}</if>
     </select>
 
     <select id="countByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
