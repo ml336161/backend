@@ -17,9 +17,9 @@
         </el-input>
         
         <div class="price-filter-inline">
-          <el-input-number v-model="minPrice" :min="0" :max="999" placeholder="最低" size="large" style="width: 100px" />
+          <el-input-number v-model="minPrice" :min="0" :max="999" size="large" style="width: 140px" />
           <span class="price-separator">-</span>
-          <el-input-number v-model="maxPrice" :min="0" :max="999" placeholder="最高" size="large" style="width: 100px" />
+          <el-input-number v-model="maxPrice" :min="0" :max="999" size="large" style="width: 140px" />
           <el-button size="large" type="primary" @click="handlePriceFilter">筛选</el-button>
           <el-button size="large" @click="resetPriceFilter">重置</el-button>
         </div>
