@@ -157,6 +157,9 @@ const handleApply = async (applyId, action) => {
     await handleApplyApi({ id: applyId, action })
     ElMessage.success(action === 'accept' ? '已接受' : '已拒绝')
     await loadApplies()
+    if (action === 'accept') {
+      await loadFriends()
+    }
   } catch (err) {
     console.error(err)
   }

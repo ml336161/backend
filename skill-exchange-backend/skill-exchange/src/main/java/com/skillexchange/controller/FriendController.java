@@ -54,4 +54,10 @@ public class FriendController {
         friendService.deleteFriend(userId, friendUserId);
         return Result.success();
     }
+
+    @GetMapping("/check/{otherUserId}")
+    public Result<Boolean> checkFriend(@RequestAttribute Long userId, @PathVariable Long otherUserId) {
+        boolean isFriend = friendService.isFriend(userId, otherUserId);
+        return Result.success(isFriend);
+    }
 }

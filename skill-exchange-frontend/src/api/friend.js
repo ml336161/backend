@@ -23,3 +23,7 @@ export function getFriends() {
 export function deleteFriend(friendUserId) {
   return request.delete(`/friends/${friendUserId}`)
 }
+
+export function checkFriend(otherUserId) {
+  return request.get(`/friends/check/${otherUserId}`)
+}

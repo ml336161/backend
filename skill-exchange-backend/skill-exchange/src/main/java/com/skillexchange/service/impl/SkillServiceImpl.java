@@ -320,6 +320,8 @@ public class SkillServiceImpl implements SkillService {
             userVO.setUsername(user.getUsername());
             userVO.setNickname(user.getNickname());
             userVO.setAvatar(user.getAvatar());
+            userVO.setTimeCoin(user.getTimeCoin());
+            userVO.setCreditScore(user.getCreditScore());
             vo.setUser(userVO);
         }
         return vo;

@@ -112,9 +112,12 @@
                 <span class="label">信用分</span>
               </div>
             </div>
-            <el-button type="primary" @click="$router.push('/chat/' + skill.userId)" :disabled="!userStore.isLoggedIn || skill.userId === userStore.userId">
+            <el-button type="primary" @click="$router.push('/chat/' + skill.userId)" :disabled="!userStore.isLoggedIn || skill.userId === userStore.userId || !isFriend">
               私信
             </el-button>
+            <div class="tooltip" v-if="userStore.isLoggedIn && skill.userId !== userStore.userId && !isFriend">
+              请先添加好友才能私信
+            </div>
           </el-card>
         </el-col>
       </el-row>
@@ -150,6 +153,7 @@ import Header from '../components/Header.vue'
 import { getSkillById, likeSkill, collectSkill } from '../api/skill'
 import { getCommentsBySkill, createComment } from '../api/comment'
 import { createExchange } from '../api/exchange'
+import { checkFriend } from '../api/friend'
 import { formatTimeAgo } from '../utils/format'
 import { ElMessage } from 'element-plus'
 import { Picture, Clock, Location, Star, Collection, Warning } from '@element-plus/icons-vue'
@@ -166,11 +170,22 @@ const appointmentDateTime = ref(null)  // 使用原生 Date 对象
 const applyForm = ref({
   remark: ''
 })
+const isFriend = ref(false)
 
 const loadSkill = async () => {
   try {
     const res = await getSkillById(route.params.id)
     skill.value = res.data
+    
+    if (userStore.isLoggedIn && skill.value.userId !== userStore.userId) {
+      try {
+        const friendRes = await checkFriend(skill.value.userId)
+        isFriend.value = friendRes.data
+      } catch (err) {
+        console.error(err)
+        isFriend.value = false
+      }
+    }
   } catch (err) {
     console.error(err)
   }
