@@ -51,7 +51,9 @@
             :file-list="fileList"
             :limit="1"
           >
-            <el-icon><Plus /></el-icon>
+            <div v-if="!hasImage">
+              <el-icon><Plus /></el-icon>
+            </div>
           </el-upload>
         </el-form-item>
         
@@ -67,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import Header from '../components/Header.vue'
@@ -83,6 +85,10 @@ const loading = ref(false)
 const types = ref([])
 const fileList = ref([])
 const token = localStorage.getItem('token')
+
+const hasImage = computed(() => {
+  return fileList.value.length > 0
+})
 
 const form = reactive({
   typeId: null,
