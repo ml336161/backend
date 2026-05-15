@@ -47,6 +47,8 @@
             list-type="picture-card"
             :on-success="handleUploadSuccess"
             :on-remove="handleUploadRemove"
+            :on-exceed="handleExceed"
+            :file-list="fileList"
             :limit="1"
           >
             <el-icon><Plus /></el-icon>
@@ -79,6 +81,7 @@ const userStore = useUserStore()
 const formRef = ref()
 const loading = ref(false)
 const types = ref([])
+const fileList = ref([])
 const token = localStorage.getItem('token')
 
 const form = reactive({
@@ -108,10 +111,16 @@ const loadTypes = async () => {
 
 const handleUploadSuccess = (res) => {
   form.images = res.data
+  fileList.value = [{ url: res.data }]
 }
 
 const handleUploadRemove = () => {
   form.images = ''
+  fileList.value = []
+}
+
+const handleExceed = () => {
+  ElMessage.warning('只能上传一张封面图片')
 }
 
 const handleSubmit = async () => {
