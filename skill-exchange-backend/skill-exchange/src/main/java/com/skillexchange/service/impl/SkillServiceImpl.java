@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -252,7 +253,7 @@ public class SkillServiceImpl implements SkillService {
     public List<SkillVO> listUserCollects(Long userId) {
         List<SkillCollect> collects = skillCollectMapper.selectByUserId(userId);
         if (collects.isEmpty()) {
-            return List.of();
+            return Collections.emptyList();
         }
         List<Long> skillIds = collects.stream()
                 .map(SkillCollect::getSkillId)
@@ -270,7 +271,7 @@ public class SkillServiceImpl implements SkillService {
     public List<SkillVO> listUserLikes(Long userId) {
         List<SkillLike> likes = skillLikeMapper.selectByUserId(userId);
         if (likes.isEmpty()) {
-            return List.of();
+            return Collections.emptyList();
         }
         List<Long> skillIds = likes.stream()
                 .map(SkillLike::getSkillId)
