@@ -9,15 +9,33 @@
           placeholder="搜索技能..."
           size="large"
           @keyup.enter="handleSearch"
-          style="width: 400px"
+          style="width: 300px"
         >
           <template #append>
             <el-button :icon="Search" @click="handleSearch" />
           </template>
         </el-input>
+        
+        <div class="price-filter-inline">
+          <el-input-number v-model="minPrice" :min="0" :max="999" placeholder="最低" size="large" style="width: 100px" />
+          <span class="price-separator">-</span>
+          <el-input-number v-model="maxPrice" :min="0" :max="999" placeholder="最高" size="large" style="width: 100px" />
+          <el-button size="large" type="primary" @click="handlePriceFilter">筛选</el-button>
+          <el-button size="large" @click="resetPriceFilter">重置</el-button>
+        </div>
+        
         <el-button type="primary" size="large" @click="$router.push('/publish')">
           发布技能
         </el-button>
+      </div>
+      
+      <div class="quick-filter">
+        <span class="filter-label">快速筛选：</span>
+        <el-tag v-for="range in priceRanges" :key="range.label" 
+          :class="{ active: selectedPriceRange === range.label }"
+          @click="selectPriceRange(range)">
+          {{ range.label }}
+        </el-tag>
       </div>
     </div>
     
@@ -30,26 +48,6 @@
             {{ type.name }}
           </el-menu-item>
         </el-menu>
-        
-        <el-divider />
-        
-        <h3>价格筛选</h3>
-        <div class="price-filter">
-          <el-input-number v-model="minPrice" :min="0" :max="999" placeholder="最低" style="width: 80px" />
-          <span class="price-separator">-</span>
-          <el-input-number v-model="maxPrice" :min="0" :max="999" placeholder="最高" style="width: 80px" />
-          <el-button size="small" type="primary" @click="handlePriceFilter">筛选</el-button>
-          <el-button size="small" @click="resetPriceFilter">重置</el-button>
-        </div>
-        
-        <el-divider />
-        
-        <h3>快速筛选</h3>
-        <el-tag v-for="range in priceRanges" :key="range.label" 
-          :class="{ active: selectedPriceRange === range.label }"
-          @click="selectPriceRange(range)">
-          {{ range.label }}
-        </el-tag>
       </div>
       
       <div class="skills-list">
@@ -200,15 +198,56 @@ onMounted(() => {
 }
 
 .search-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
   gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.price-filter-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-separator {
+  color: #999;
+  font-weight: bold;
+}
+
+.quick-filter {
+  max-width: 1400px;
+  margin: 12px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+}
+
+.filter-label {
+  color: #666;
+  font-size: 14px;
+}
+
+.quick-filter .el-tag {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-filter .el-tag:hover {
+  transform: scale(1.05);
+}
+
+.quick-filter .el-tag.active {
+  background: #409eff;
+  color: #fff;
 }
 
 .main-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 20px auto;
   display: flex;
   gap: 20px;
@@ -224,28 +263,6 @@ onMounted(() => {
   padding: 10px 0;
   color: #333;
   font-size: 14px;
-}
-
-.price-filter {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.price-separator {
-  color: #999;
-}
-
-.type-sidebar .el-tag {
-  margin-right: 8px;
-  margin-bottom: 8px;
-  cursor: pointer;
-}
-
-.type-sidebar .el-tag.active {
-  background: #409eff;
-  color: #fff;
 }
 
 .skills-list {
