@@ -183,7 +183,7 @@ const formatTime = (time) => {
 
 const goToFriendProfile = (userId) => {
   if (userId !== userStore.userId) {
-    router.push(`/profile/${userId}`)
+    router.push(`/profile/friend/${userId}`)
   }
 }
 

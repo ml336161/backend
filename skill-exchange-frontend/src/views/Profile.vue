@@ -179,6 +179,7 @@
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
+              :headers="uploadHeaders"
             >
               <el-button size="small" type="primary">上传头像</el-button>
             </el-upload>
@@ -261,6 +262,12 @@ const pwdForm = reactive({
 const isOwnProfile = computed(() => {
   const userId = route.params.userId
   return !userId || parseInt(userId) === userStore.userId
+})
+
+const uploadHeaders = computed(() => {
+  return {
+    Authorization: `Bearer ${userStore.token}`
+  }
 })
 
 const loadProfile = async () => {
