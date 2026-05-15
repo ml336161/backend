@@ -8,6 +8,7 @@ import com.skillexchange.dto.UpdateUserRequest;
 import com.skillexchange.service.UserService;
 import com.skillexchange.vo.CreditRadarVO;
 import com.skillexchange.vo.LoginResponse;
+import com.skillexchange.vo.ProfileStatsVO;
 import com.skillexchange.vo.UserVO;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,6 +67,12 @@ public class UserController {
     public Result<CreditRadarVO> getCreditRadar(@RequestAttribute Long userId) {
         CreditRadarVO radar = userService.getCreditRadar(userId);
         return Result.success(radar);
+    }
+
+    @GetMapping("/profile-stats")
+    public Result<ProfileStatsVO> getProfileStats(@RequestAttribute Long userId) {
+        ProfileStatsVO stats = userService.getProfileStats(userId);
+        return Result.success(stats);
     }
 
     @GetMapping("/list")

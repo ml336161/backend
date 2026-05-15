@@ -31,3 +31,7 @@ export function updatePassword(data) {
 export function getCreditRadar() {
   return request.get('/user/credit-radar')
 }
+
+export function getProfileStats() {
+  return request.get('/user/profile-stats')
+}

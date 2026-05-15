@@ -59,6 +59,42 @@ public class SkillController {
         return Result.success(skills);
     }
 
+    @GetMapping("/hot")
+    public Result<List<SkillVO>> listHotSkills(@RequestParam(defaultValue = "6") Integer limit) {
+        List<SkillVO> skills = skillService.listHotSkills(limit);
+        return Result.success(skills);
+    }
+
+    @GetMapping("/latest")
+    public Result<List<SkillVO>> listLatestSkills(@RequestParam(defaultValue = "6") Integer limit) {
+        List<SkillVO> skills = skillService.listLatestSkills(limit);
+        return Result.success(skills);
+    }
+
+    @GetMapping("/collects")
+    public Result<List<SkillVO>> listUserCollects(@RequestAttribute Long userId) {
+        List<SkillVO> skills = skillService.listUserCollects(userId);
+        return Result.success(skills);
+    }
+
+    @GetMapping("/likes")
+    public Result<List<SkillVO>> listUserLikes(@RequestAttribute Long userId) {
+        List<SkillVO> skills = skillService.listUserLikes(userId);
+        return Result.success(skills);
+    }
+
+    @GetMapping("/collects/count")
+    public Result<Integer> countUserCollects(@RequestAttribute Long userId) {
+        int count = skillService.countUserCollects(userId);
+        return Result.success(count);
+    }
+
+    @GetMapping("/likes/count")
+    public Result<Integer> countUserLikes(@RequestAttribute Long userId) {
+        int count = skillService.countUserLikes(userId);
+        return Result.success(count);
+    }
+
     @PostMapping("/{id}/like")
     public Result<Void> like(@RequestAttribute Long userId, @PathVariable Long id) {
         skillService.like(userId, id);

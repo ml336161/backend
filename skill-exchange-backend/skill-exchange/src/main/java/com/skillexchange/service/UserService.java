@@ -1,7 +1,5 @@
 package com.skillexchange.service;
 
-
-
 import com.skillexchange.dto.LoginRequest;
 import com.skillexchange.dto.RegisterRequest;
 import com.skillexchange.dto.UpdatePasswordRequest;
@@ -9,6 +7,7 @@ import com.skillexchange.dto.UpdateUserRequest;
 import com.skillexchange.entity.User;
 import com.skillexchange.vo.CreditRadarVO;
 import com.skillexchange.vo.LoginResponse;
+import com.skillexchange.vo.ProfileStatsVO;
 import com.skillexchange.vo.UserVO;
 
 import java.util.List;
@@ -45,13 +44,5 @@ public interface UserService {
 
     void rewardFirstSkill(Long userId);
 
-
-
-
-
-
-
-
-
-
+    ProfileStatsVO getProfileStats(Long userId);
 }

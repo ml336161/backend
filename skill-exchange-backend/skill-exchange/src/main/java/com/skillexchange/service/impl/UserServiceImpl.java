@@ -8,12 +8,17 @@ import com.skillexchange.entity.CoinLog;
 import com.skillexchange.entity.User;
 import com.skillexchange.exception.BusinessException;
 import com.skillexchange.mapper.CoinLogMapper;
+import com.skillexchange.mapper.FriendMapper;
+import com.skillexchange.mapper.SkillCollectMapper;
+import com.skillexchange.mapper.SkillExchangeMapper;
+import com.skillexchange.mapper.SkillLikeMapper;
 import com.skillexchange.mapper.SkillMapper;
 import com.skillexchange.mapper.UserMapper;
 import com.skillexchange.service.UserService;
 import com.skillexchange.utils.JwtUtil;
 import com.skillexchange.vo.CreditRadarVO;
 import com.skillexchange.vo.LoginResponse;
+import com.skillexchange.vo.ProfileStatsVO;
 import com.skillexchange.vo.UserVO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,6 +39,18 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private CoinLogMapper coinLogMapper;
+
+    @Resource
+    private SkillCollectMapper skillCollectMapper;
+
+    @Resource
+    private SkillLikeMapper skillLikeMapper;
+
+    @Resource
+    private FriendMapper friendMapper;
+
+    @Resource
+    private SkillExchangeMapper skillExchangeMapper;
 
     @Resource
     private JwtUtil jwtUtil;
@@ -80,12 +97,17 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("用户名已存在");
         }
 
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new BusinessException("两次密码不一致");
+        }
+
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());  // 明文保存！不要加密！
         user.setNickname(request.getNickname());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
+        user.setBirthday(request.getBirthday());
         user.setRole("user");
         user.setTimeCoin(3);
         user.setCreditScore(80);
@@ -141,6 +163,9 @@ public class UserServiceImpl implements UserService {
         }
         if (request.getPhone() != null) {
             user.setPhone(request.getPhone());
+        }
+        if (request.getBirthday() != null) {
+            user.setBirthday(request.getBirthday());
         }
         userMapper.update(user);
         return convertToVO(user);
@@ -255,6 +280,18 @@ public class UserServiceImpl implements UserService {
         coinLogMapper.insert(coinLog);
     }
 
+    @Override
+    public ProfileStatsVO getProfileStats(Long userId) {
+        ProfileStatsVO stats = new ProfileStatsVO();
+        stats.setCollectCount(skillCollectMapper.countByUserId(userId));
+        stats.setLikeCount(skillLikeMapper.countByUserId(userId));
+        stats.setFriendCount(friendMapper.countByUserId(userId));
+        stats.setSkillCount(skillMapper.countByUserId(userId));
+        stats.setAppliedExchangeCount(skillExchangeMapper.countByRequesterId(userId));
+        stats.setReceivedExchangeCount(skillExchangeMapper.countByProviderId(userId));
+        return stats;
+    }
+
     private UserVO convertToVO(User user) {
         UserVO vo = new UserVO();
         vo.setId(user.getId());
@@ -263,6 +300,7 @@ public class UserServiceImpl implements UserService {
         vo.setAvatar(user.getAvatar());
         vo.setEmail(user.getEmail());
         vo.setPhone(user.getPhone());
+        vo.setBirthday(user.getBirthday());
         vo.setRole(user.getRole());
         vo.setTimeCoin(user.getTimeCoin());
         vo.setCreditScore(user.getCreditScore());

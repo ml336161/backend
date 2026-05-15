@@ -33,4 +33,16 @@ public interface SkillService {
     Skill getEntityById(Long id);
 
     Long count();
+
+    List<SkillVO> listHotSkills(Integer limit);
+
+    List<SkillVO> listLatestSkills(Integer limit);
+
+    List<SkillVO> listUserCollects(Long userId);
+
+    List<SkillVO> listUserLikes(Long userId);
+
+    int countUserCollects(Long userId);
+
+    int countUserLikes(Long userId);
 }

@@ -2,6 +2,7 @@ package com.skillexchange.vo;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,6 +19,8 @@ public class UserVO {
     private String email;
 
     private String phone;
+
+    private LocalDate birthday;
 
     private String role;
 

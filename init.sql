@@ -21,6 +21,7 @@ CREATE TABLE `user` (
   `avatar` VARCHAR(255) DEFAULT NULL COMMENT '头像',
   `email` VARCHAR(100) DEFAULT NULL COMMENT '邮箱',
   `phone` VARCHAR(20) DEFAULT NULL COMMENT '手机号',
+  `birthday` DATE DEFAULT NULL COMMENT '出生日期',
   `role` ENUM('admin', 'user') NOT NULL DEFAULT 'user' COMMENT '角色：admin-管理员，user-普通用户',
   `time_coin` INT(11) NOT NULL DEFAULT 3 COMMENT '时间币',
   `credit_score` INT(11) NOT NULL DEFAULT 80 COMMENT '信用分',

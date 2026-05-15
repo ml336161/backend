@@ -226,6 +226,74 @@ public class SkillServiceImpl implements SkillService {
         return (long) skillMapper.countAll();
     }
 
+    @Override
+    public List<SkillVO> listHotSkills(Integer limit) {
+        List<Skill> skills = skillMapper.selectHotSkills(limit);
+        return skills.stream()
+                .map(skill -> {
+                    User user = userMapper.selectById(skill.getUserId());
+                    return convertToVO(skill, user, false, false);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SkillVO> listLatestSkills(Integer limit) {
+        List<Skill> skills = skillMapper.selectLatestSkills(limit);
+        return skills.stream()
+                .map(skill -> {
+                    User user = userMapper.selectById(skill.getUserId());
+                    return convertToVO(skill, user, false, false);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SkillVO> listUserCollects(Long userId) {
+        List<SkillCollect> collects = skillCollectMapper.selectByUserId(userId);
+        if (collects.isEmpty()) {
+            return List.of();
+        }
+        List<Long> skillIds = collects.stream()
+                .map(SkillCollect::getSkillId)
+                .collect(Collectors.toList());
+        List<Skill> skills = skillMapper.selectByIds(skillIds);
+        return skills.stream()
+                .map(skill -> {
+                    User user = userMapper.selectById(skill.getUserId());
+                    return convertToVO(skill, user, false, true);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SkillVO> listUserLikes(Long userId) {
+        List<SkillLike> likes = skillLikeMapper.selectByUserId(userId);
+        if (likes.isEmpty()) {
+            return List.of();
+        }
+        List<Long> skillIds = likes.stream()
+                .map(SkillLike::getSkillId)
+                .collect(Collectors.toList());
+        List<Skill> skills = skillMapper.selectByIds(skillIds);
+        return skills.stream()
+                .map(skill -> {
+                    User user = userMapper.selectById(skill.getUserId());
+                    return convertToVO(skill, user, true, false);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int countUserCollects(Long userId) {
+        return skillCollectMapper.countByUserId(userId);
+    }
+
+    @Override
+    public int countUserLikes(Long userId) {
+        return skillLikeMapper.countByUserId(userId);
+    }
+
     private SkillVO convertToVO(Skill skill, User user, Boolean liked, Boolean collected) {
         SkillVO vo = new SkillVO();
         vo.setId(skill.getId());

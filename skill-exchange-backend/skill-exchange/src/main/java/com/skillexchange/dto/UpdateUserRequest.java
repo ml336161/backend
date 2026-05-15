@@ -3,6 +3,7 @@ package com.skillexchange.dto;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import java.time.LocalDate;
 
 @Data
 public class UpdateUserRequest {
@@ -15,4 +16,6 @@ public class UpdateUserRequest {
     private String email;
 
     private String phone;
+
+    private LocalDate birthday;
 }

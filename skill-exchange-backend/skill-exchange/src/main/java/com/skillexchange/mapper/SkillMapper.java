@@ -41,4 +41,10 @@ public interface SkillMapper {
     int updateCollectCount(@Param("id") Long id, @Param("count") Integer count);
 
     int updateStatus(@Param("id") Long id, @Param("status") Integer status);
+
+    List<Skill> selectHotSkills(@Param("limit") Integer limit);
+
+    List<Skill> selectLatestSkills(@Param("limit") Integer limit);
+
+    List<Skill> selectByIds(@Param("ids") List<Long> ids);
 }

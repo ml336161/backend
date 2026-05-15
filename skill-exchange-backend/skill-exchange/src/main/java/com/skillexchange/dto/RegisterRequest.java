@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 @Data
 public class RegisterRequest {
@@ -17,6 +18,10 @@ public class RegisterRequest {
     @Size(min = 6, max = 20, message = "密码长度必须在6-20之间")
     private String password;
 
+    @NotBlank(message = "确认密码不能为空")
+    @Size(min = 6, max = 20, message = "确认密码长度必须在6-20之间")
+    private String confirmPassword;
+
     @NotBlank(message = "昵称不能为空")
     private String nickname;
 
@@ -24,4 +29,6 @@ public class RegisterRequest {
     private String email;
 
     private String phone;
+
+    private LocalDate birthday;
 }

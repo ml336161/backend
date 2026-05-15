@@ -39,10 +39,19 @@
             size="large"
           />
         </el-form-item>
+        <el-form-item prop="birthday">
+          <el-date-picker
+            v-model="registerForm.birthday"
+            type="date"
+            placeholder="出生日期"
+            size="large"
+            style="width: 100%"
+          />
+        </el-form-item>
         <el-form-item prop="email">
           <el-input
             v-model="registerForm.email"
-            placeholder="邮箱"
+            placeholder="邮箱（选填）"
             prefix-icon="Message"
             size="large"
           />
@@ -76,6 +85,7 @@ const registerForm = reactive({
   password: '',
   confirmPassword: '',
   nickname: '',
+  birthday: '',
   email: ''
 })
 
@@ -102,6 +112,9 @@ const rules = {
   ],
   nickname: [
     { required: true, message: '请输入昵称', trigger: 'blur' }
+  ],
+  birthday: [
+    { required: true, message: '请选择出生日期', trigger: 'change' }
   ]
 }
 
@@ -113,7 +126,9 @@ const handleRegister = async () => {
     await register({
       username: registerForm.username,
       password: registerForm.password,
+      confirmPassword: registerForm.confirmPassword,
       nickname: registerForm.nickname,
+      birthday: registerForm.birthday,
       email: registerForm.email
     })
     
@@ -121,32 +136,20 @@ const handleRegister = async () => {
     router.push('/login')
     
   } catch (err) {
-    // --- 修改开始 ---
-    
-    // 1. 依然保留控制台打印，方便调试
     console.error(err)
 
-    // 2. 判断后端返回的具体消息（根据你后端代码里写的 message）
-    // 假设后端返回的是 "该邮箱已被注册"
     if (err.message && err.message.includes('该邮箱已被注册')) {
        ElMessage.error('该邮箱已被注册，请直接登录')
-    } 
-    // 3. 兜底处理：如果不确定后端返回什么，或者后端没捕获到这个异常
-    // 只要不是成功的，都走这里
-    else if (err.message) {
-       // 直接显示后端返回的错误信息（比如 "系统异常：..."）
+    } else if (err.message) {
        ElMessage.error(err.message)
     } else {
        ElMessage.error('注册失败，网络错误')
     }
     
-    // --- 修改结束 ---
-    
   } finally {
     loading.value = false
   }
 }
-
 </script>
 
 <style scoped>
@@ -176,6 +179,7 @@ const handleRegister = async () => {
   text-align: center;
   color: #999;
   font-size: 14px;
+  margin-top: 15px;
 }
 
 .register-footer span {

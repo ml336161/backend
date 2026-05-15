@@ -23,6 +23,7 @@
                 <h2>{{ profileUser.nickname }}</h2>
                 <p>用户名：{{ profileUser.username }}</p>
                 <p>邮箱：{{ profileUser.email || '未设置' }}</p>
+                <p>出生日期：{{ profileUser.birthday ? formatDate(profileUser.birthday) : '未设置' }}</p>
                 <div class="user-stats">
                   <div class="stat-item">
                     <span class="value">{{ profileUser.timeCoin }}</span>
@@ -46,7 +47,12 @@
           
           <el-card class="my-skills">
             <template #header>
-              <span>{{ isOwnProfile ? '我的技能' : '发布的技能' }}</span>
+              <div class="card-header">
+                <span>{{ isOwnProfile ? '我的技能' : '发布的技能' }}</span>
+                <el-button v-if="isOwnProfile" type="primary" size="small" @click="$router.push('/publish')">
+                  发布技能
+                </el-button>
+              </div>
             </template>
             <el-row :gutter="20">
               <el-col :span="8" v-for="skill in skills" :key="skill.id">
@@ -57,6 +63,10 @@
                   </div>
                   <h4>{{ skill.title }}</h4>
                   <p class="price">{{ skill.price }} 时间币</p>
+                  <div class="skill-actions" v-if="isOwnProfile">
+                    <el-button size="mini" @click.stop="editSkill(skill)">编辑</el-button>
+                    <el-button size="mini" type="danger" @click.stop="deleteSkill(skill.id)">删除</el-button>
+                  </div>
                 </el-card>
               </el-col>
             </el-row>
@@ -65,34 +75,80 @@
         </el-col>
         
         <el-col :span="8">
-          <el-card v-if="isOwnProfile">
+          <el-card class="quick-stats">
             <template #header>
-              <span>快速操作</span>
+              <span>我的数据</span>
             </template>
-            <div class="quick-actions">
-              <el-button @click="$router.push('/coin')">时间币明细</el-button>
-              <el-button @click="$router.push('/exchanges')">技能交换</el-button>
-              <el-button @click="$router.push('/friends')">我的好友</el-button>
-              <el-button @click="$router.push('/chat')">私信</el-button>
-              <el-button @click="$router.push('/feedback')">意见反馈</el-button>
+            <div class="stats-grid">
+              <div class="stat-card" @click="$router.push('/profile/collects')">
+                <div class="stat-icon"><el-icon :size="24" color="#409eff"><Star /></el-icon></div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ profileStats.collectCount || 0 }}</span>
+                  <span class="stat-label">收藏技能</span>
+                </div>
+              </div>
+              <div class="stat-card" @click="$router.push('/profile/likes')">
+                <div class="stat-icon"><el-icon :size="24" color="#f56c6c"><Heart /></el-icon></div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ profileStats.likeCount || 0 }}</span>
+                  <span class="stat-label">点赞技能</span>
+                </div>
+              </div>
+              <div class="stat-card" @click="$router.push('/friends')">
+                <div class="stat-icon"><el-icon :size="24" color="#67c23a"><UserFilled /></el-icon></div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ profileStats.friendCount || 0 }}</span>
+                  <span class="stat-label">好友</span>
+                </div>
+              </div>
+              <div class="stat-card" @click="goToMySkills">
+                <div class="stat-icon"><el-icon :size="24" color="#e6a23c"><Briefcase /></el-icon></div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ profileStats.skillCount || 0 }}</span>
+                  <span class="stat-label">发布技能</span>
+                </div>
+              </div>
             </div>
           </el-card>
           
-          <el-card v-if="isOwnProfile">
+          <el-card class="time-coin-card" v-if="isOwnProfile">
             <template #header>
-              <span>每日签到</span>
+              <span>我的时间币</span>
             </template>
-            <div class="sign-in">
-              <p>连续签到 {{ consecutiveDays }} 天</p>
+            <div class="time-coin-content">
+              <div class="coin-balance" @click="$router.push('/coin')">
+                <span class="coin-icon"><el-icon :size="32" color="#ffd700"><Coins /></el-icon></span>
+                <span class="coin-value">{{ profileUser?.timeCoin || 0 }}</span>
+              </div>
               <el-button 
                 type="primary" 
                 size="large" 
                 @click="handleSignIn" 
                 :loading="signing"
                 :disabled="todaySigned || signing"
+                class="sign-in-btn"
               >
                 {{ todaySigned ? '今日已签到' : '签到领币' }}
               </el-button>
+              <p v-if="consecutiveDays > 0" class="sign-in-tip">
+                已连续签到 {{ consecutiveDays }} 天
+              </p>
+            </div>
+          </el-card>
+          
+          <el-card class="exchange-stats" v-if="isOwnProfile">
+            <template #header>
+              <span>技能交换</span>
+            </template>
+            <div class="exchange-items">
+              <div class="exchange-item" @click="$router.push('/exchanges?type=applied')">
+                <span class="exchange-count">{{ profileStats.appliedExchangeCount || 0 }}</span>
+                <span class="exchange-label">我申请的</span>
+              </div>
+              <div class="exchange-item" @click="$router.push('/exchanges?type=received')">
+                <span class="exchange-count">{{ profileStats.receivedExchangeCount || 0 }}</span>
+                <span class="exchange-label">我收到的</span>
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -107,8 +163,8 @@
         <el-form-item label="邮箱">
           <el-input v-model="editForm.email" />
         </el-form-item>
-        <el-form-item label="手机">
-          <el-input v-model="editForm.phone" />
+        <el-form-item label="出生日期">
+          <el-date-picker v-model="editForm.birthday" type="date" style="width: 100%" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -124,8 +180,8 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import Header from '../components/Header.vue'
-import { getUserById, updateUser, getCreditRadar } from '../api/user'
-import { getSkillByUser } from '../api/skill'
+import { getUserById, updateUser, getCreditRadar, getProfileStats } from '../api/user'
+import { getSkillByUser, deleteSkill as deleteSkillApi } from '../api/skill'
 import { signIn, checkSigned, getConsecutiveDays } from '../api/coin'
 import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts'
@@ -136,6 +192,7 @@ const userStore = useUserStore()
 
 const profileUser = ref(null)
 const skills = ref([])
+const profileStats = ref({})
 const radarChart = ref(null)
 const editDialogVisible = ref(false)
 const signing = ref(false)
@@ -145,7 +202,7 @@ const consecutiveDays = ref(0)
 const editForm = reactive({
   nickname: '',
   email: '',
-  phone: ''
+  birthday: ''
 })
 
 const isOwnProfile = computed(() => {
@@ -159,7 +216,6 @@ const loadProfile = async () => {
     const res = await getUserById(userId)
     profileUser.value = res.data
     
-    // 更新store中的用户信息
     if (isOwnProfile.value) {
       userStore.setUser(res.data)
     }
@@ -175,6 +231,17 @@ const loadSkills = async () => {
     skills.value = res.data || []
   } catch (err) {
     console.error(err)
+  }
+}
+
+const loadProfileStats = async () => {
+  if (!isOwnProfile.value) return
+  try {
+    const res = await getProfileStats()
+    profileStats.value = res.data || {}
+  } catch (err) {
+    console.error(err)
+    profileStats.value = {}
   }
 }
 
@@ -227,25 +294,19 @@ const loadSignStatus = async () => {
 }
 
 const handleSignIn = async () => {
-  // 防止重复点击
-  if (signing.value || todaySigned.value) {
-    return
-  }
+  if (signing.value || todaySigned.value) return
   
   signing.value = true
   
   try {
     await signIn()
     
-    // 立即更新状态
     todaySigned.value = true
     consecutiveDays.value += 1
-    
-    // 显示成功提示
     ElMessage.success('签到成功，获得1时间币')
     
-    // 刷新用户信息
     await loadProfile()
+    await loadProfileStats()
     
   } catch (err) {
     console.error('签到失败:', err)
@@ -264,13 +325,43 @@ const handleSignIn = async () => {
 
 const handleUpdate = async () => {
   try {
-    await updateUser(editForm)
+    await updateUser({
+      nickname: editForm.nickname,
+      email: editForm.email,
+      birthday: editForm.birthday
+    })
     ElMessage.success('更新成功')
     editDialogVisible.value = false
     await loadProfile()
   } catch (err) {
     console.error(err)
+    ElMessage.error(err.message || '更新失败')
   }
+}
+
+const editSkill = (skill) => {
+  router.push(`/publish?id=${skill.id}`)
+}
+
+const deleteSkill = async (skillId) => {
+  try {
+    await deleteSkillApi(skillId)
+    ElMessage.success('删除成功')
+    await loadSkills()
+  } catch (err) {
+    console.error(err)
+    ElMessage.error(err.message || '删除失败')
+  }
+}
+
+const goToMySkills = () => {
+  router.push('/skills?filter=mine')
+}
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
 }
 
 watch(() => route.params.userId, () => {
@@ -281,13 +372,14 @@ watch(() => route.params.userId, () => {
 onMounted(() => {
   loadProfile()
   loadSkills()
+  loadProfileStats()
   loadCreditRadar()
   loadSignStatus()
   
   if (isOwnProfile.value && profileUser.value) {
     editForm.nickname = profileUser.value.nickname
     editForm.email = profileUser.value.email
-    editForm.phone = profileUser.value.phone
+    editForm.birthday = profileUser.value.birthday
   }
 })
 </script>
@@ -379,22 +471,135 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.quick-actions {
+.skill-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-stats {
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.stat-card:hover {
+  background: #e9ecef;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.stat-info {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
-.quick-actions .el-button {
-  width: 100%;
+.stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
 }
 
-.sign-in {
+.stat-label {
+  font-size: 12px;
+  color: #999;
+}
+
+.time-coin-card {
+  margin-bottom: 20px;
+}
+
+.time-coin-content {
   text-align: center;
 }
 
-.sign-in p {
-  margin-bottom: 15px;
-  color: #666;
+.coin-balance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.coin-icon {
+  background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+  padding: 12px;
+  border-radius: 50%;
+}
+
+.coin-value {
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.sign-in-btn {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.sign-in-tip {
+  font-size: 12px;
+  color: #67c23a;
+  margin: 0;
+}
+
+.exchange-stats {
+  margin-bottom: 20px;
+}
+
+.exchange-items {
+  display: flex;
+  gap: 12px;
+}
+
+.exchange-item {
+  flex: 1;
+  text-align: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.exchange-item:hover {
+  background: #e9ecef;
+}
+
+.exchange-count {
+  display: block;
+  font-size: 24px;
+  font-weight: bold;
+  color: #409eff;
+}
+
+.exchange-label {
+  font-size: 12px;
+  color: #999;
 }
 </style>

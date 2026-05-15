@@ -109,4 +109,30 @@
         UPDATE skill SET status = #{status}, update_time = NOW() WHERE id = #{id}
     </update>
 
+    <select id="selectHotSkills" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill 
+        WHERE status = 1 
+        ORDER BY (like_count + collect_count + view_count) DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectLatestSkills" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill 
+        WHERE status = 1 
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill 
+        WHERE id IN 
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY FIELD(id, 
+        <foreach collection="ids" item="id" separator=",">
+            #{id}
+        </foreach>)
+    </select>
+
 </mapper>

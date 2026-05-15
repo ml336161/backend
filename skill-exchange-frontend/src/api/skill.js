@@ -12,6 +12,30 @@ export function getSkillByUser(userId) {
   return request.get('/skills/user/' + userId)
 }
 
+export function getHotSkills(params) {
+  return request.get('/skills/hot', { params })
+}
+
+export function getLatestSkills(params) {
+  return request.get('/skills/latest', { params })
+}
+
+export function getUserCollects() {
+  return request.get('/skills/collects')
+}
+
+export function getUserLikes() {
+  return request.get('/skills/likes')
+}
+
+export function getCollectCount() {
+  return request.get('/skills/collects/count')
+}
+
+export function getLikeCount() {
+  return request.get('/skills/likes/count')
+}
+
 export function createSkill(data) {
   return request.post('/skills', data)
 }

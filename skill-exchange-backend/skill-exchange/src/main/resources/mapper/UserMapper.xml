@@ -10,6 +10,7 @@
         <result column="avatar" property="avatar"/>
         <result column="email" property="email"/>
         <result column="phone" property="phone"/>
+        <result column="birthday" property="birthday"/>
         <result column="role" property="role"/>
         <result column="time_coin" property="timeCoin"/>
         <result column="credit_score" property="creditScore"/>
@@ -19,12 +20,12 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, username, password, nickname, avatar, email, phone, role, time_coin, credit_score, status, create_time, update_time
+        id, username, password, nickname, avatar, email, phone, birthday, role, time_coin, credit_score, status, create_time, update_time
     </sql>
 
     <insert id="insert" parameterType="com.skillexchange.entity.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (username, password, nickname, avatar, email, phone, role, time_coin, credit_score, status)
-        VALUES (#{username}, #{password}, #{nickname}, #{avatar}, #{email}, #{phone}, #{role}, #{timeCoin}, #{creditScore}, #{status})
+        INSERT INTO user (username, password, nickname, avatar, email, phone, birthday, role, time_coin, credit_score, status)
+        VALUES (#{username}, #{password}, #{nickname}, #{avatar}, #{email}, #{phone}, #{birthday}, #{role}, #{timeCoin}, #{creditScore}, #{status})
     </insert>
 
     <update id="update" parameterType="com.skillexchange.entity.User">
@@ -34,6 +35,7 @@
             <if test="avatar != null">avatar = #{avatar},</if>
             <if test="email != null">email = #{email},</if>
             <if test="phone != null">phone = #{phone},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
             update_time = NOW()
         </set>
         WHERE id = #{id}
