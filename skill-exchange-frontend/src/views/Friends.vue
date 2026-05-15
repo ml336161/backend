@@ -94,7 +94,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import Header from '../components/Header.vue'
-import { getReceivedApplies, getFriends, applyFriend, handleApply, deleteFriend } from '../api/friend'
+import { getReceivedApplies, getFriends, applyFriend, handleApply as handleApplyApi, deleteFriend } from '../api/friend'
 import { getUserByUsername } from '../api/user'
 import { formatDate } from '../utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -149,6 +149,16 @@ const handleSearch = async () => {
   } catch (err) {
     ElMessage.error('用户不存在')
     searchResult.value = null
+  }
+}
+
+const handleApply = async (applyId, action) => {
+  try {
+    await handleApplyApi({ id: applyId, action })
+    ElMessage.success(action === 'accept' ? '已接受' : '已拒绝')
+    await loadApplies()
+  } catch (err) {
+    console.error(err)
   }
 }
 
