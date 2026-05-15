@@ -110,6 +110,7 @@ public class SkillExchangeServiceImpl implements SkillExchangeService {
         if (!"pending".equals(exchange.getStatus())) {
             throw new BusinessException("该申请已处理");
         }
+
         skillExchangeMapper.updateStatus(exchange.getId(), "in_progress");
     }
 
@@ -157,42 +158,57 @@ public class SkillExchangeServiceImpl implements SkillExchangeService {
         if (exchange == null) {
             throw new BusinessException("交换记录不存在");
         }
-        return convertExchangeToVO(exchange);
+        Skill skill = skillMapper.selectById(exchange.getSkillId());
+        User provider = userMapper.selectById(exchange.getProviderId());
+        User requester = userMapper.selectById(exchange.getRequesterId());
+        return convertToVO(exchange, skill, provider, requester);
     }
 
     @Override
     public List<SkillExchangeVO> listReceived(Long userId) {
-        return convertExchangeList(skillExchangeMapper.selectByProviderId(userId));
+        List<SkillExchange> exchanges = skillExchangeMapper.selectByProviderId(userId);
+        return exchanges.stream()
+                .map(exchange -> {
+                    Skill skill = skillMapper.selectById(exchange.getSkillId());
+                    User provider = userMapper.selectById(exchange.getProviderId());
+                    User requester = userMapper.selectById(exchange.getRequesterId());
+                    return convertToVO(exchange, skill, provider, requester);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<SkillExchangeVO> listSent(Long userId) {
-        return convertExchangeList(skillExchangeMapper.selectByRequesterId(userId));
+        List<SkillExchange> exchanges = skillExchangeMapper.selectByRequesterId(userId);
+        return exchanges.stream()
+                .map(exchange -> {
+                    Skill skill = skillMapper.selectById(exchange.getSkillId());
+                    User provider = userMapper.selectById(exchange.getProviderId());
+                    User requester = userMapper.selectById(exchange.getRequesterId());
+                    return convertToVO(exchange, skill, provider, requester);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
     public Long countPending(Long userId) {
-        return skillExchangeMapper.selectByProviderId(userId).stream()
+        List<SkillExchange> exchanges = skillExchangeMapper.selectByProviderId(userId);
+        return exchanges.stream()
                 .filter(e -> "pending".equals(e.getStatus()))
                 .count();
     }
 
     @Override
     public List<SkillExchangeVO> listAll() {
-        return convertExchangeList(skillExchangeMapper.selectAll());
-    }
-
-    private List<SkillExchangeVO> convertExchangeList(List<SkillExchange> exchanges) {
+        List<SkillExchange> exchanges = skillExchangeMapper.selectAll();
         return exchanges.stream()
-                .map(this::convertExchangeToVO)
+                .map(exchange -> {
+                    Skill skill = skillMapper.selectById(exchange.getSkillId());
+                    User provider = userMapper.selectById(exchange.getProviderId());
+                    User requester = userMapper.selectById(exchange.getRequesterId());
+                    return convertToVO(exchange, skill, provider, requester);
+                })
                 .collect(Collectors.toList());
-    }
-
-    private SkillExchangeVO convertExchangeToVO(SkillExchange exchange) {
-        Skill skill = skillMapper.selectById(exchange.getSkillId());
-        User provider = userMapper.selectById(exchange.getProviderId());
-        User requester = userMapper.selectById(exchange.getRequesterId());
-        return convertToVO(exchange, skill, provider, requester);
     }
 
     private void parseAndSetScheduledTime(SkillExchange exchange, String timeStr) {
