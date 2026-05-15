@@ -185,6 +185,9 @@
             </el-upload>
           </div>
         </el-form-item>
+        <el-form-item label="用户名">
+          <el-input v-model="editForm.username" />
+        </el-form-item>
         <el-form-item label="昵称">
           <el-input v-model="editForm.nickname" />
         </el-form-item>
@@ -247,6 +250,7 @@ const todaySigned = ref(false)
 const consecutiveDays = ref(0)
 
 const editForm = reactive({
+  username: '',
   nickname: '',
   email: '',
   birthday: '',
@@ -387,6 +391,7 @@ const handleSignIn = async () => {
 const handleUpdate = async () => {
   try {
     await updateUser({
+      username: editForm.username,
       nickname: editForm.nickname,
       email: editForm.email,
       birthday: editForm.birthday,
@@ -504,6 +509,7 @@ onMounted(() => {
   loadSignStatus()
   
   if (isOwnProfile.value && profileUser.value) {
+    editForm.username = profileUser.value.username
     editForm.nickname = profileUser.value.nickname
     editForm.email = profileUser.value.email
     editForm.birthday = profileUser.value.birthday
@@ -513,6 +519,7 @@ onMounted(() => {
 
 watch(() => profileUser.value, (newUser) => {
   if (isOwnProfile.value && newUser) {
+    editForm.username = newUser.username
     editForm.nickname = newUser.nickname
     editForm.email = newUser.email
     editForm.birthday = newUser.birthday

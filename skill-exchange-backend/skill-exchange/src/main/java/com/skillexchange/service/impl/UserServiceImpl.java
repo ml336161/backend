@@ -167,6 +167,14 @@ public class UserServiceImpl implements UserService {
         if (request.getBirthday() != null) {
             user.setBirthday(request.getBirthday());
         }
+        if (request.getUsername() != null && !request.getUsername().trim().isEmpty()) {
+            // 检查用户名是否已被使用
+            User existing = userMapper.selectByUsername(request.getUsername());
+            if (existing != null && !existing.getId().equals(userId)) {
+                throw new BusinessException("用户名已被使用");
+            }
+            user.setUsername(request.getUsername());
+        }
         userMapper.update(user);
         return convertToVO(user);
     }
