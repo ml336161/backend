@@ -12,6 +12,8 @@ public interface SkillExchangeService {
 
     void handle(Long userId, HandleSkillExchangeRequest request);
 
+    void complete(Long userId, Long exchangeId);
+
     SkillExchangeVO getById(Long id);
 
     List<SkillExchangeVO> listReceived(Long userId);

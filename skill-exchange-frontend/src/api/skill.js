@@ -28,6 +28,14 @@ export function getUserLikes() {
   return request.get('/skills/likes')
 }
 
+export function getUserLikesByUserId(userId) {
+  return request.get('/skills/user/' + userId + '/likes')
+}
+
+export function getUserCollectsByUserId(userId) {
+  return request.get('/skills/user/' + userId + '/collects')
+}
+
 export function getCollectCount() {
   return request.get('/skills/collects/count')
 }

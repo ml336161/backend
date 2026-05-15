@@ -95,6 +95,18 @@ public class SkillController {
         return Result.success(count);
     }
 
+    @GetMapping("/user/{userId}/likes")
+    public Result<List<SkillVO>> listUserLikesByUserId(@PathVariable Long userId) {
+        List<SkillVO> skills = skillService.listUserLikesByUserId(userId);
+        return Result.success(skills);
+    }
+
+    @GetMapping("/user/{userId}/collects")
+    public Result<List<SkillVO>> listUserCollectsByUserId(@PathVariable Long userId) {
+        List<SkillVO> skills = skillService.listUserCollectsByUserId(userId);
+        return Result.success(skills);
+    }
+
     @PostMapping("/{id}/like")
     public Result<Void> like(@RequestAttribute Long userId, @PathVariable Long id) {
         skillService.like(userId, id);

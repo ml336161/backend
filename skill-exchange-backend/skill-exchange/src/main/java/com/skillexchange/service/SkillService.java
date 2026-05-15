@@ -45,4 +45,8 @@ public interface SkillService {
     int countUserCollects(Long userId);
 
     int countUserLikes(Long userId);
+
+    List<SkillVO> listUserCollectsByUserId(Long userId);
+
+    List<SkillVO> listUserLikesByUserId(Long userId);
 }

@@ -40,6 +40,11 @@
                     拒绝
                   </el-button>
                 </div>
+                <div class="exchange-actions" v-if="item.status === 'in_progress'">
+                  <el-button type="success" @click="handleComplete(item.id)">
+                    完成交换
+                  </el-button>
+                </div>
               </el-card>
             </div>
             <el-empty v-if="receivedExchanges.length === 0" description="暂无收到的申请" />
@@ -79,7 +84,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import Header from '../components/Header.vue'
-import { getReceivedExchanges, getSentExchanges, handleExchange } from '../api/exchange'
+import { getReceivedExchanges, getSentExchanges, handleExchange, completeExchange } from '../api/exchange'
 import { formatDateTime } from '../utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '../store/user'
@@ -111,12 +116,14 @@ const getStatusType = (status) => {
   switch (status) {
     case 'pending':
       return 'warning'
-    case 'accepted':
+    case 'in_progress':
       return 'primary'
     case 'completed':
       return 'success'
     case 'rejected':
       return 'danger'
+    case 'accepted':
+      return 'primary'
     default:
       return 'info'
   }
@@ -126,12 +133,14 @@ const getStatusText = (status) => {
   switch (status) {
     case 'pending':
       return '待处理'
-    case 'accepted':
-      return '已接受'
+    case 'in_progress':
+      return '进行中'
     case 'completed':
       return '已完成'
     case 'rejected':
       return '已拒绝'
+    case 'accepted':
+      return '已接受'
     default:
       return '未知'
   }
@@ -142,7 +151,6 @@ const handleAccept = async (id) => {
     await ElMessageBox.confirm('确定接受该申请吗？', '提示')
     await handleExchange({ id, action: 'accept' })
     ElMessage.success('已接受申请')
-    await userStore.refreshUser()
     await loadReceived()
   } catch (err) {
     console.error(err)
@@ -154,6 +162,19 @@ const handleReject = async (id) => {
     await handleExchange({ id, action: 'reject' })
     ElMessage.success('已拒绝申请')
     await loadReceived()
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const handleComplete = async (id) => {
+  try {
+    await ElMessageBox.confirm('确定完成该交换吗？时间币将从申请人账户扣除并转入您的账户。', '提示')
+    await completeExchange(id)
+    ElMessage.success('交换已完成')
+    await userStore.refreshUser()
+    await loadReceived()
+    await loadSent()
   } catch (err) {
     console.error(err)
   }

@@ -49,6 +49,12 @@ const routes = [
     meta: { title: '个人中心' }
   },
   {
+    path: '/profile/friend/:userId',
+    name: 'FriendProfile',
+    component: () => import('../views/FriendProfile.vue'),
+    meta: { title: '好友资料', requiresAuth: true }
+  },
+  {
     path: '/profile/collects',
     name: 'Collects',
     component: () => import('../views/Collects.vue'),

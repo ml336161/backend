@@ -111,6 +111,25 @@ public class SkillExchangeServiceImpl implements SkillExchangeService {
             throw new BusinessException("该申请已处理");
         }
 
+        skillExchangeMapper.updateStatus(exchange.getId(), "in_progress");
+    }
+
+    private void handleReject(Long exchangeId) {
+        skillExchangeMapper.updateStatus(exchangeId, "rejected");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void complete(Long userId, Long exchangeId) {
+        SkillExchange exchange = skillExchangeMapper.selectById(exchangeId);
+        if (exchange == null) {
+            throw new BusinessException("交换申请不存在");
+        }
+
+        if (!"in_progress".equals(exchange.getStatus())) {
+            throw new BusinessException("只能完成进行中的交换");
+        }
+
         User requester = userMapper.selectById(exchange.getRequesterId());
         if (requester.getTimeCoin() < exchange.getPrice()) {
             throw new BusinessException("对方时间币不足");
@@ -121,10 +140,6 @@ public class SkillExchangeServiceImpl implements SkillExchangeService {
 
         skillExchangeMapper.updateStatus(exchange.getId(), "completed");
         skillExchangeMapper.updateActualTime(exchange.getId(), LocalDateTime.now());
-    }
-
-    private void handleReject(Long exchangeId) {
-        skillExchangeMapper.updateStatus(exchangeId, "rejected");
     }
 
     private void handleCancel(SkillExchange exchange, Long userId) {

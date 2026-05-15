@@ -8,6 +8,10 @@ export function handleExchange(data) {
   return request.put('/exchanges/handle', data)
 }
 
+export function completeExchange(id) {
+  return request.put('/exchanges/' + id + '/complete')
+}
+
 export function getReceivedExchanges() {
   return request.get('/exchanges/received')
 }

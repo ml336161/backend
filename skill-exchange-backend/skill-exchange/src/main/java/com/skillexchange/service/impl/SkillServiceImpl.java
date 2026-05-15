@@ -295,6 +295,16 @@ public class SkillServiceImpl implements SkillService {
         return skillLikeMapper.countByUserId(userId);
     }
 
+    @Override
+    public List<SkillVO> listUserCollectsByUserId(Long userId) {
+        return listUserCollects(userId);
+    }
+
+    @Override
+    public List<SkillVO> listUserLikesByUserId(Long userId) {
+        return listUserLikes(userId);
+    }
+
     private SkillVO convertToVO(Skill skill, User user, Boolean liked, Boolean collected) {
         SkillVO vo = new SkillVO();
         vo.setId(skill.getId());

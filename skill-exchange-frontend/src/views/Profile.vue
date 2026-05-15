@@ -23,7 +23,9 @@
                 <h2>{{ profileUser.nickname }}</h2>
                 <p>用户名：{{ profileUser.username }}</p>
                 <p>邮箱：{{ profileUser.email || '未设置' }}</p>
-                <p>出生日期：{{ profileUser.birthday ? formatDate(profileUser.birthday) : '未设置' }}</p>
+                <p>出生日期：{{ profileUser.birthday ? formatDate(profileUser.birthday) : '未设置' }}
+                  <span v-if="calculateAge(profileUser.birthday) > 0">（{{ calculateAge(profileUser.birthday) }}岁）</span>
+                </p>
                 <div class="user-stats">
                   <div class="stat-item">
                     <span class="value">{{ profileUser.timeCoin }}</span>
@@ -151,12 +153,37 @@
               </div>
             </div>
           </el-card>
+          
+          <el-card class="password-card">
+            <template #header>
+              <span>账户安全</span>
+            </template>
+            <el-button type="text" @click="changePwdDialogVisible = true">
+              修改密码
+            </el-button>
+          </el-card>
         </el-col>
       </el-row>
     </div>
     
     <el-dialog v-model="editDialogVisible" title="编辑资料" width="500px">
       <el-form :model="editForm" label-width="80px">
+        <el-form-item label="头像">
+          <div class="avatar-upload">
+            <el-avatar :size="80" :src="editForm.avatar">
+              {{ editForm.nickname?.charAt(0) }}
+            </el-avatar>
+            <el-upload
+              class="avatar-uploader"
+              action="/api/upload"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <el-button size="small" type="primary">上传头像</el-button>
+            </el-upload>
+          </div>
+        </el-form-item>
         <el-form-item label="昵称">
           <el-input v-model="editForm.nickname" />
         </el-form-item>
@@ -172,6 +199,24 @@
         <el-button type="primary" @click="handleUpdate">保存</el-button>
       </template>
     </el-dialog>
+    
+    <el-dialog v-model="changePwdDialogVisible" title="修改密码" width="400px">
+      <el-form :model="pwdForm" label-width="100px">
+        <el-form-item label="原密码">
+          <el-input v-model="pwdForm.oldPassword" type="password" />
+        </el-form-item>
+        <el-form-item label="新密码">
+          <el-input v-model="pwdForm.newPassword" type="password" />
+        </el-form-item>
+        <el-form-item label="确认密码">
+          <el-input v-model="pwdForm.confirmPassword" type="password" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="changePwdDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleChangePassword">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -180,7 +225,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import Header from '../components/Header.vue'
-import { getUserById, updateUser, getCreditRadar, getProfileStats } from '../api/user'
+import { getUserById, updateUser, getCreditRadar, getProfileStats, updatePassword } from '../api/user'
 import { getSkillByUser, deleteSkill as deleteSkillApi } from '../api/skill'
 import { signIn, checkSigned, getConsecutiveDays } from '../api/coin'
 import { ElMessage } from 'element-plus'
@@ -195,6 +240,7 @@ const skills = ref([])
 const profileStats = ref({})
 const radarChart = ref(null)
 const editDialogVisible = ref(false)
+const changePwdDialogVisible = ref(false)
 const signing = ref(false)
 const todaySigned = ref(false)
 const consecutiveDays = ref(0)
@@ -202,7 +248,14 @@ const consecutiveDays = ref(0)
 const editForm = reactive({
   nickname: '',
   email: '',
-  birthday: ''
+  birthday: '',
+  avatar: ''
+})
+
+const pwdForm = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
 })
 
 const isOwnProfile = computed(() => {
@@ -329,7 +382,8 @@ const handleUpdate = async () => {
     await updateUser({
       nickname: editForm.nickname,
       email: editForm.email,
-      birthday: editForm.birthday
+      birthday: editForm.birthday,
+      avatar: editForm.avatar
     })
     ElMessage.success('更新成功')
     editDialogVisible.value = false
@@ -339,6 +393,66 @@ const handleUpdate = async () => {
     console.error(err)
     ElMessage.error(err.message || '更新失败')
   }
+}
+
+const handleChangePassword = async () => {
+  if (!pwdForm.oldPassword || !pwdForm.newPassword || !pwdForm.confirmPassword) {
+    ElMessage.error('请填写所有字段')
+    return
+  }
+  if (pwdForm.newPassword !== pwdForm.confirmPassword) {
+    ElMessage.error('两次输入的密码不一致')
+    return
+  }
+  try {
+    await updatePassword({
+      oldPassword: pwdForm.oldPassword,
+      newPassword: pwdForm.newPassword
+    })
+    ElMessage.success('密码修改成功')
+    changePwdDialogVisible.value = false
+    pwdForm.oldPassword = ''
+    pwdForm.newPassword = ''
+    pwdForm.confirmPassword = ''
+  } catch (err) {
+    console.error(err)
+    ElMessage.error(err.message || '密码修改失败')
+  }
+}
+
+const handleAvatarSuccess = (response) => {
+  if (response.code === 200) {
+    editForm.avatar = 'http://localhost:8080' + response.data
+    ElMessage.success('头像上传成功')
+  } else {
+    ElMessage.error('头像上传失败')
+  }
+}
+
+const beforeAvatarUpload = (file) => {
+  const isImage = file.type.startsWith('image/')
+  if (!isImage) {
+    ElMessage.error('请上传图片文件')
+    return false
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isLt2M) {
+    ElMessage.error('图片大小不能超过2MB')
+    return false
+  }
+  return true
+}
+
+const calculateAge = (birthday) => {
+  if (!birthday) return 0
+  const birthDate = new Date(birthday)
+  const today = new Date()
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const monthDiff = today.getMonth() - birthDate.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+  return age
 }
 
 const editSkill = (skill) => {
@@ -382,8 +496,18 @@ onMounted(() => {
     editForm.nickname = profileUser.value.nickname
     editForm.email = profileUser.value.email
     editForm.birthday = profileUser.value.birthday
+    editForm.avatar = profileUser.value.avatar
   }
 })
+
+watch(() => profileUser.value, (newUser) => {
+  if (isOwnProfile.value && newUser) {
+    editForm.nickname = newUser.nickname
+    editForm.email = newUser.email
+    editForm.birthday = newUser.birthday
+    editForm.avatar = newUser.avatar
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>
@@ -391,6 +515,12 @@ onMounted(() => {
   max-width: 1200px;
   margin: 20px auto;
   padding: 0 20px;
+}
+
+.avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .card-header {

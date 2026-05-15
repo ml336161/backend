@@ -30,6 +30,12 @@ public class SkillExchangeController {
         return Result.success();
     }
 
+    @PutMapping("/{id}/complete")
+    public Result<Void> complete(@RequestAttribute Long userId, @PathVariable Long id) {
+        skillExchangeService.complete(userId, id);
+        return Result.success();
+    }
+
     @GetMapping("/{id}")
     public Result<SkillExchangeVO> getById(@PathVariable Long id) {
         SkillExchangeVO exchange = skillExchangeService.getById(id);
