@@ -369,6 +369,40 @@
       </template>
     </el-dialog>
 
+    <el-dialog v-model="skillDetailDialogVisible" title="技能详情" width="600px">
+      <div v-if="currentSkill" class="skill-detail-content">
+        <div class="skill-cover-large" v-if="currentSkill.images">
+          <el-image 
+            :src="getFirstImage(currentSkill.images)"
+            fit="cover"
+            style="width: 100%; height: 100%;"
+          />
+        </div>
+        <div class="skill-info">
+          <h3 class="skill-title">{{ currentSkill.title }}</h3>
+          <el-descriptions :column="1" border class="skill-desc">
+            <el-descriptions-item label="分类">{{ currentSkill.typeName || '-'"></el-descriptions-item>
+            <el-descriptions-item label="价格">
+              <span class="price-tag">{{ currentSkill.price }} 时间币</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag :type="getSkillStatusTagType(currentSkill.status)">
+                {{ getSkillStatusText(currentSkill.status) }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="发布者">{{ currentSkill.user?.nickname || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="发布时间">{{ formatDate(currentSkill.createTime) }}</el-descriptions-item>
+            <el-descriptions-item label="描述">
+              <div style="white-space: pre-wrap;">{{ currentSkill.description || '-' }}</div>
+            </el-descriptions-item>
+          </el-descriptions>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="skillDetailDialogVisible = false">返回</el-button>
+      </template>
+    </el-dialog>
+
     <el-dialog v-model="replyDialogVisible" title="回复反馈" width="550px">
       <div class="reply-content">
         <div class="feedback-preview">
@@ -435,8 +469,10 @@ const reports = ref([])
 const feedbacks = ref([])
 
 const userDetailDialogVisible = ref(false)
+const skillDetailDialogVisible = ref(false)
 const replyDialogVisible = ref(false)
 const currentUser = ref(null)
+const currentSkill = ref(null)
 const replyingFeedback = ref(null)
 const replyContent = ref('')
 
@@ -541,21 +577,8 @@ const viewUserDetail = (user) => {
 }
 
 const viewSkillDetail = (skill) => {
-  ElMessageBox.alert(
-    `<div style="text-align: left">
-      <h4>${skill.title}</h4>
-      <p><strong>分类：</strong>${skill.typeName || '-'}</p>
-      <p><strong>价格：</strong>${skill.price} 时间币</p>
-      <p><strong>状态：</strong>${getSkillStatusText(skill.status)}</p>
-      <p><strong>描述：</strong>${skill.description || '-'}</p>
-      <p><strong>发布时间：</strong>${formatDate(skill.createTime)}</p>
-    </div>`,
-    '技能详情',
-    {
-      dangerouslyUseHTMLString: true,
-      confirmButtonText: '关闭'
-    }
-  )
+  currentSkill.value = { ...skill }
+  skillDetailDialogVisible.value = true
 }
 
 const goToSkillDetail = (skillId) => {
@@ -847,6 +870,36 @@ onMounted(() => {
 
 .detail-content {
   padding: 10px 0;
+}
+
+.skill-detail-content {
+  padding: 10px 0;
+}
+
+.skill-cover-large {
+  width: 100%;
+  height: 220px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #f5f7fa;
+}
+
+.skill-cover-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.skill-title {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.skill-desc {
+  margin-top: 12px;
 }
 
 .feedback-preview {
