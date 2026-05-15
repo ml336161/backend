@@ -36,7 +36,7 @@
             <el-table-column prop="id" label="ID" width="80" sortable />
             <el-table-column label="头像" width="80">
               <template #default="{ row }">
-                <el-avatar :src="row.avatar" :size="40">
+                <el-avatar :src="getFullUrl(row.avatar)" :size="40">
                   {{ row.nickname?.charAt(0) }}
                 </el-avatar>
               </template>
@@ -97,7 +97,7 @@
             <el-table-column prop="id" label="ID" width="80" sortable />
             <el-table-column label="封面" width="100">
               <template #default="{ row }">
-                <div class="skill-cover" :style="{ backgroundImage: `url(http://localhost:8080${row.images?.split(',')[0]})` }"></div>
+                <div class="skill-cover" :style="{ backgroundImage: `url(${getFirstImage(row.images)})` }"></div>
               </template>
             </el-table-column>
             <el-table-column prop="title" label="技能名称" min-width="180" />
@@ -162,7 +162,7 @@
             <el-table-column label="发起方" width="150">
               <template #default="{ row }">
                 <div class="user-mini">
-                  <el-avatar :size="32" :src="row.requester?.avatar">{{ row.requester?.nickname?.charAt(0) }}</el-avatar>
+                  <el-avatar :size="32" :src="getFullUrl(row.requester?.avatar)">{{ row.requester?.nickname?.charAt(0) }}</el-avatar>
                   <span>{{ row.requester?.nickname }}</span>
                 </div>
               </template>
@@ -170,8 +170,8 @@
             <el-table-column label="接受方" width="150">
               <template #default="{ row }">
                 <div class="user-mini">
-                  <el-avatar :size="32" :src="row.receiver?.avatar">{{ row.receiver?.nickname?.charAt(0) }}</el-avatar>
-                  <span>{{ row.receiver?.nickname }}</span>
+                  <el-avatar :size="32" :src="getFullUrl(row.provider?.avatar)">{{ row.provider?.nickname?.charAt(0) }}</el-avatar>
+                  <span>{{ row.provider?.nickname }}</span>
                 </div>
               </template>
             </el-table-column>
@@ -229,7 +229,7 @@
             <el-table-column label="举报人" width="150">
               <template #default="{ row }">
                 <div class="user-mini">
-                  <el-avatar :size="32" :src="row.reporter?.avatar">{{ row.reporter?.nickname?.charAt(0) }}</el-avatar>
+                  <el-avatar :size="32" :src="getFullUrl(row.reporter?.avatar)">{{ row.reporter?.nickname?.charAt(0) }}</el-avatar>
                   <span>{{ row.reporter?.nickname }}</span>
                 </div>
               </template>
@@ -237,6 +237,24 @@
             <el-table-column prop="targetType" label="举报类型" width="100">
               <template #default="{ row }">
                 <el-tag :type="row.targetType === 'user' ? 'info' : 'warning'">{{ row.targetType === 'user' ? '用户' : '技能' }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="被举报对象" min-width="180">
+              <template #default="{ row }">
+                <div v-if="row.targetType === 'user'" class="user-mini">
+                  <el-avatar :size="32" :src="getFullUrl(row.targetUser?.avatar)">{{ row.targetUser?.nickname?.charAt(0) }}</el-avatar>
+                  <span>{{ row.targetUser?.nickname }}</span>
+                </div>
+                <div v-else-if="row.targetType === 'skill'" class="skill-mini">
+                  <el-image 
+                    v-if="row.targetSkill?.images"
+                    :src="getFirstImage(row.targetSkill.images)" 
+                    :preview-src-list="row.targetSkill.images.split(',').map(img => getFullUrl(img))"
+                    fit="cover"
+                    style="width: 32px; height: 32px; border-radius: 4px; margin-right: 8px;"
+                  />
+                  <span>{{ row.targetSkill?.title }}</span>
+                </div>
               </template>
             </el-table-column>
             <el-table-column prop="reason" label="举报原因" min-width="200" show-overflow-tooltip />
@@ -281,7 +299,7 @@
             <el-table-column label="用户" width="150">
               <template #default="{ row }">
                 <div class="user-mini">
-                  <el-avatar :size="32" :src="row.user?.avatar">{{ row.user?.nickname?.charAt(0) }}</el-avatar>
+                  <el-avatar :size="32" :src="getFullUrl(row.user?.avatar)">{{ row.user?.nickname?.charAt(0) }}</el-avatar>
                   <span>{{ row.user?.nickname }}</span>
                 </div>
               </template>
@@ -376,6 +394,19 @@ import Header from '../components/Header.vue'
 import { getDashboardStats, updateUserStatus, getReports, getFeedbacks, handleReport, replyFeedback, getUsers, getSkills, getExchanges, deleteSkill } from '../api/admin'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { User, Tickets, Coin, Warning, Document, Refresh } from '@element-plus/icons-vue'
+
+const getFullUrl = (url) => {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  if (url.startsWith('/')) return 'http://localhost:8080' + url
+  return 'http://localhost:8080/' + url
+}
+
+const getFirstImage = (images) => {
+  if (!images) return ''
+  const firstImage = images.split(',')[0]
+  return getFullUrl(firstImage)
+}
 
 const activeTab = ref('users')
 const userSearch = ref('')
@@ -764,6 +795,12 @@ onMounted(() => {
 .price-tag {
   color: #e6a23c;
   font-weight: 500;
+}
+
+.skill-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .detail-content {

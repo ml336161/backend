@@ -32,4 +32,8 @@ public class ReportVO {
     private UserVO handler;
 
     private LocalDateTime createTime;
+
+    private UserVO targetUser;
+
+    private SkillVO targetSkill;
 }

@@ -3,12 +3,15 @@ package com.skillexchange.service.impl;
 import com.skillexchange.dto.CreateReportRequest;
 import com.skillexchange.dto.HandleReportRequest;
 import com.skillexchange.entity.Report;
+import com.skillexchange.entity.Skill;
 import com.skillexchange.entity.User;
 import com.skillexchange.exception.BusinessException;
 import com.skillexchange.mapper.ReportMapper;
+import com.skillexchange.mapper.SkillMapper;
 import com.skillexchange.mapper.UserMapper;
 import com.skillexchange.service.ReportService;
 import com.skillexchange.vo.ReportVO;
+import com.skillexchange.vo.SkillVO;
 import com.skillexchange.vo.UserVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +29,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private SkillMapper skillMapper;
 
     @Override
     @Transactional
@@ -120,6 +126,29 @@ public class ReportServiceImpl implements ReportService {
                 handlerVO.setNickname(handler.getNickname());
                 handlerVO.setAvatar(handler.getAvatar());
                 vo.setHandler(handlerVO);
+            }
+        }
+
+        if ("user".equals(report.getTargetType())) {
+            User targetUser = userMapper.selectById(report.getTargetId());
+            if (targetUser != null) {
+                UserVO userVO = new UserVO();
+                userVO.setId(targetUser.getId());
+                userVO.setUsername(targetUser.getUsername());
+                userVO.setNickname(targetUser.getNickname());
+                userVO.setAvatar(targetUser.getAvatar());
+                vo.setTargetUser(userVO);
+            }
+        } else if ("skill".equals(report.getTargetType())) {
+            Skill targetSkill = skillMapper.selectById(report.getTargetId());
+            if (targetSkill != null) {
+                SkillVO skillVO = new SkillVO();
+                skillVO.setId(targetSkill.getId());
+                skillVO.setTitle(targetSkill.getTitle());
+                skillVO.setDescription(targetSkill.getDescription());
+                skillVO.setImages(targetSkill.getImages());
+                skillVO.setPrice(targetSkill.getPrice());
+                vo.setTargetSkill(skillVO);
             }
         }
 
