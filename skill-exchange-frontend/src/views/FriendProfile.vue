@@ -31,6 +31,7 @@
                     <span class="label">信用分</span>
                   </div>
                 </div>
+                <el-button type="primary" @click="goToChat">发信息</el-button>
               </div>
             </div>
           </el-card>
@@ -62,7 +63,7 @@
             </template>
             <div class="stats-grid">
               <div class="stat-card" @click="showLikes = true">
-                <div class="stat-icon"><el-icon :size="24" color="#f56c6c"><Heart /></el-icon></div>
+                <div class="stat-icon"><el-icon :size="24" color="#f56c6c"><Star /></el-icon></div>
                 <div class="stat-info">
                   <span class="stat-value">{{ userLikes.length }}</span>
                   <span class="stat-label">点赞技能</span>
@@ -126,9 +127,11 @@ import Header from '../components/Header.vue'
 import { getUserById } from '../api/user'
 import { getSkillByUser } from '../api/skill'
 import { getUserLikesByUserId, getUserCollectsByUserId } from '../api/skill'
-import { Picture, Heart, Star } from '@element-plus/icons-vue'
+import { Picture, Star } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 
 const profileUser = ref(null)
 const skills = ref([])
@@ -197,6 +200,11 @@ const formatDate = (dateStr) => {
   if (!dateStr) return ''
   const date = new Date(dateStr)
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
+}
+
+const goToChat = () => {
+  const userId = route.params.userId
+  router.push(`/chat/${userId}`)
 }
 
 watch(() => route.params.userId, () => {
