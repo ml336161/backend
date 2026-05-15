@@ -97,7 +97,7 @@
             <el-table-column prop="id" label="ID" width="80" sortable />
             <el-table-column label="封面" width="100">
               <template #default="{ row }">
-                <div class="skill-cover" :style="{ backgroundImage: `url(${row.cover})` }"></div>
+                <div class="skill-cover" :style="{ backgroundImage: `url(http://localhost:8080${row.images?.split(',')[0]})` }"></div>
               </template>
             </el-table-column>
             <el-table-column prop="title" label="技能名称" min-width="180" />
