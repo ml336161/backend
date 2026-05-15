@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skillexchange.mapper.SysLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.skillexchange.entity.SysLog">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="module" property="module"/>
+        <result column="operation" property="operation"/>
+        <result column="method" property="method"/>
+        <result column="params" property="params"/>
+        <result column="ip" property="ip"/>
+        <result column="status" property="status"/>
+        <result column="error_msg" property="errorMsg"/>
+        <result column="execute_time" property="executeTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, module, operation, method, params, ip, status, error_msg, execute_time, create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.skillexchange.entity.SysLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_log (user_id, module, operation, method, params, ip, status, error_msg, execute_time)
+        VALUES (#{userId}, #{module}, #{operation}, #{method}, #{params}, #{ip}, #{status}, #{errorMsg}, #{executeTime})
+    </insert>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM sys_log ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM sys_log WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByModule" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM sys_log WHERE module = #{module} ORDER BY create_time DESC
+    </select>
+
+    <select id="countAll" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM sys_log
+    </select>
+
+</mapper>

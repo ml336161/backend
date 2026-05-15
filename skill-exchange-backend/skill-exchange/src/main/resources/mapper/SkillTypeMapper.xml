@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skillexchange.mapper.SkillTypeMapper">
+
+    <resultMap id="BaseResultMap" type="com.skillexchange.entity.SkillType">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="icon" property="icon"/>
+        <result column="sort" property="sort"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, description, icon, sort, status, create_time, update_time
+    </sql>
+
+    <insert id="insert" parameterType="com.skillexchange.entity.SkillType" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO skill_type (name, description, icon, sort, status)
+        VALUES (#{name}, #{description}, #{icon}, #{sort}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.skillexchange.entity.SkillType">
+        UPDATE skill_type
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM skill_type WHERE id = #{id}
+    </delete>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill_type WHERE id = #{id}
+    </select>
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill_type WHERE name = #{name}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill_type ORDER BY sort ASC
+    </select>
+
+    <select id="selectActive" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill_type WHERE status = 1 ORDER BY sort ASC
+    </select>
+
+    <select id="countAll" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM skill_type
+    </select>
+
+</mapper>

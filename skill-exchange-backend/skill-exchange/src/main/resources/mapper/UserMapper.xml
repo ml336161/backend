@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skillexchange.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.skillexchange.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="role" property="role"/>
+        <result column="time_coin" property="timeCoin"/>
+        <result column="credit_score" property="creditScore"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, username, password, nickname, avatar, email, phone, role, time_coin, credit_score, status, create_time, update_time
+    </sql>
+
+    <insert id="insert" parameterType="com.skillexchange.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (username, password, nickname, avatar, email, phone, role, time_coin, credit_score, status)
+        VALUES (#{username}, #{password}, #{nickname}, #{avatar}, #{email}, #{phone}, #{role}, #{timeCoin}, #{creditScore}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.skillexchange.entity.User">
+        UPDATE user
+        <set>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user WHERE id = #{id}
+    </select>
+
+    <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user WHERE username = #{username}
+    </select>
+
+    <select id="selectByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user WHERE email = #{email}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user
+    </select>
+
+    <update id="updatePassword">
+        UPDATE user SET password = #{password}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE user SET status = #{status}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updateTimeCoin">
+        UPDATE user SET time_coin = #{timeCoin}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="updateCreditScore">
+        UPDATE user SET credit_score = #{creditScore}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+    <select id="selectByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user WHERE status = #{status}
+    </select>
+
+    <select id="selectByRole" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM user WHERE role = #{role}
+    </select>
+
+    <select id="countByStatus" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user WHERE status = #{status}
+    </select>
+
+    <select id="countByRole" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user WHERE role = #{role}
+    </select>
+
+    <select id="countAll" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user
+    </select>
+
+</mapper>

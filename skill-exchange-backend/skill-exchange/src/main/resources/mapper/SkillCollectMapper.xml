@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skillexchange.mapper.SkillCollectMapper">
+
+    <resultMap id="BaseResultMap" type="com.skillexchange.entity.SkillCollect">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="skill_id" property="skillId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, skill_id, create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.skillexchange.entity.SkillCollect" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO skill_collect (user_id, skill_id) VALUES (#{userId}, #{skillId})
+    </insert>
+
+    <delete id="deleteByUserIdAndSkillId">
+        DELETE FROM skill_collect WHERE user_id = #{userId} AND skill_id = #{skillId}
+    </delete>
+
+    <select id="selectByUserIdAndSkillId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill_collect
+        WHERE user_id = #{userId} AND skill_id = #{skillId}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM skill_collect WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="countBySkillId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM skill_collect WHERE skill_id = #{skillId}
+    </select>
+
+    <select id="countByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM skill_collect WHERE user_id = #{userId}
+    </select>
+
+</mapper>

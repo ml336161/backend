@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skillexchange.mapper.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.skillexchange.entity.Comment">
+        <id column="id" property="id"/>
+        <result column="skill_id" property="skillId"/>
+        <result column="user_id" property="userId"/>
+        <result column="exchange_id" property="exchangeId"/>
+        <result column="content" property="content"/>
+        <result column="rating" property="rating"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, skill_id, user_id, exchange_id, content, rating, parent_id, create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.skillexchange.entity.Comment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comment (skill_id, user_id, exchange_id, content, rating, parent_id)
+        VALUES (#{skillId}, #{userId}, #{exchangeId}, #{content}, #{rating}, #{parentId})
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM comment WHERE id = #{id}
+    </delete>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM comment WHERE id = #{id}
+    </select>
+
+    <select id="selectBySkillId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM comment WHERE skill_id = #{skillId} ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM comment WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="countBySkillId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM comment WHERE skill_id = #{skillId}
+    </select>
+
+    <select id="countByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM comment WHERE user_id = #{userId}
+    </select>
+
+</mapper>

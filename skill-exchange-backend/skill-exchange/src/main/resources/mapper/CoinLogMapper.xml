@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skillexchange.mapper.CoinLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.skillexchange.entity.CoinLog">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="type" property="type"/>
+        <result column="amount" property="amount"/>
+        <result column="balance" property="balance"/>
+        <result column="related_type" property="relatedType"/>
+        <result column="related_id" property="relatedId"/>
+        <result column="description" property="description"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, type, amount, balance, related_type, related_id, description, create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.skillexchange.entity.CoinLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO coin_log (user_id, type, amount, balance, related_type, related_id, description)
+        VALUES (#{userId}, #{type}, #{amount}, #{balance}, #{relatedType}, #{relatedId}, #{description})
+    </insert>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM coin_log WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByUserIdAndType" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM coin_log
+        WHERE user_id = #{userId} AND type = #{type} ORDER BY create_time DESC
+    </select>
+
+    <select id="countByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM coin_log WHERE user_id = #{userId}
+    </select>
+
+</mapper>

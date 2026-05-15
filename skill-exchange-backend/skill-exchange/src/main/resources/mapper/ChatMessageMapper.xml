@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skillexchange.mapper.ChatMessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.skillexchange.entity.ChatMessage">
+        <id column="id" property="id"/>
+        <result column="from_user_id" property="fromUserId"/>
+        <result column="to_user_id" property="toUserId"/>
+        <result column="exchange_id" property="exchangeId"/>
+        <result column="type" property="type"/>
+        <result column="content" property="content"/>
+        <result column="is_read" property="isRead"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, from_user_id, to_user_id, exchange_id, type, content, is_read, create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.skillexchange.entity.ChatMessage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chat_message (from_user_id, to_user_id, exchange_id, type, content, is_read)
+        VALUES (#{fromUserId}, #{toUserId}, #{exchangeId}, #{type}, #{content}, #{isRead})
+    </insert>
+
+    <select id="selectConversation" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM chat_message
+        WHERE (from_user_id = #{userId1} AND to_user_id = #{userId2})
+        OR (from_user_id = #{userId2} AND to_user_id = #{userId1})
+        ORDER BY create_time ASC
+    </select>
+
+    <select id="selectUnreadByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/> FROM chat_message
+        WHERE to_user_id = #{userId} AND is_read = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="countUnreadByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM chat_message WHERE to_user_id = #{userId} AND is_read = 0
+    </select>
+
+    <select id="countUnreadByFromUserIdAndToUserId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM chat_message
+        WHERE from_user_id = #{fromUserId} AND to_user_id = #{toUserId} AND is_read = 0
+    </select>
+
+    <update id="updateReadStatus">
+        UPDATE chat_message SET is_read = 1
+        WHERE from_user_id = #{fromUserId} AND to_user_id = #{toUserId} AND is_read = 0
+    </update>
+
+</mapper>
