@@ -107,12 +107,6 @@ const routes = [
     name: 'Admin',
     component: () => import('../views/Admin.vue'),
     meta: { title: '管理后台', requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/system-chat',
-    name: 'SystemChat',
-    component: () => import('../views/SystemChat.vue'),
-    meta: { title: '系统消息', requiresAuth: true }
   }
 ]
 

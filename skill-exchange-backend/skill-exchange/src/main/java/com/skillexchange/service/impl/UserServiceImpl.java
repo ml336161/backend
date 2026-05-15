@@ -55,9 +55,6 @@ public class UserServiceImpl implements UserService {
     @Resource
     private JwtUtil jwtUtil;
 
-    @Resource
-    private SystemMessageService systemMessageService;
-
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
@@ -124,8 +121,6 @@ public class UserServiceImpl implements UserService {
         coinLog.setBalance(3);
         coinLog.setDescription("注册赠送时间币");
         coinLogMapper.insert(coinLog);
-
-        systemMessageService.sendWelcomeMessage(user.getId());
     }
 
     @Override

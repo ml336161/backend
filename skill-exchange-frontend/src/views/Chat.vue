@@ -10,21 +10,6 @@
               <span>消息</span>
             </template>
             <div class="chat-list">
-              <div class="system-chat-item"
-                   :class="{ active: selectedUserId === 'system' }"
-                   @click="goToSystemChat">
-                <div class="system-icon-wrapper">
-                  <el-icon :size="24" class="system-icon"><Bell /></el-icon>
-                </div>
-                <div class="chat-info">
-                  <span class="name">系统消息</span>
-                  <span class="preview">系统通知、反馈回复等</span>
-                </div>
-                <el-badge v-if="systemUnreadCount > 0" 
-                         :value="systemUnreadCount" 
-                         class="unread-badge" />
-              </div>
-              
               <div v-for="friend in friends" :key="friend.friendUserId" 
                    class="chat-item"
                    :class="{ active: selectedUserId === friend.friendUserId }"
@@ -97,16 +82,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import Header from '../components/Header.vue'
 import { getFriends } from '../api/friend'
 import { getConversation, sendMessage, markAsRead } from '../api/chat'
-import { getUnreadCount as getSystemUnreadCount } from '../api/systemMessage'
 import { formatTimeAgo } from '../utils/format'
-import { ElMessage } from 'element-plus'
-import { Bell } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -119,7 +101,6 @@ const messages = ref([])
 const inputContent = ref('')
 const sending = ref(false)
 const allMessages = ref({})
-const systemUnreadCount = ref(0)
 
 const loadFriends = async () => {
   try {
@@ -204,49 +185,23 @@ const formatTime = (time) => {
 }
 
 const goToFriendProfile = (userId) => {
-  console.log('点击头像，userId:', userId, '当前用户:', userStore.userId)
-  
-  // 确保 userId 是有效的
   if (!userId) {
-    console.log('userId 无效，不跳转')
     return
   }
   
-  // 将两个 ID 都转换为数字进行比较
   const clickedUserId = parseInt(userId)
   const currentUserId = parseInt(userStore.userId)
   
-  console.log('转换后 - clickedUserId:', clickedUserId, 'currentUserId:', currentUserId)
-  
-  // 如果点击的是自己的头像，跳转到个人资料页
   if (clickedUserId === currentUserId) {
-    console.log('点击的是自己的头像，跳转到个人资料页')
     router.push('/profile')
     return
   }
   
-  // 点击的是好友头像，跳转到好友资料页
-  console.log('跳转到好友资料页:', `/profile/friend/${userId}`)
   router.push(`/profile/friend/${userId}`)
-}
-
-const goToSystemChat = () => {
-  selectedUserId.value = 'system'
-  router.push('/system-chat')
-}
-
-const loadSystemUnreadCount = async () => {
-  try {
-    const res = await getSystemUnreadCount()
-    systemUnreadCount.value = res.data || 0
-  } catch (err) {
-    console.error(err)
-  }
 }
 
 onMounted(() => {
   loadFriends()
-  loadSystemUnreadCount()
   if (route.params.userId) {
     setTimeout(() => selectChat(parseInt(route.params.userId)), 500)
   }
