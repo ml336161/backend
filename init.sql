@@ -84,7 +84,7 @@ CREATE TABLE `skill_exchange` (
   `skill_id` BIGINT(20) UNSIGNED NOT NULL COMMENT '技能ID',
   `provider_id` BIGINT(20) UNSIGNED NOT NULL COMMENT '提供者用户ID',
   `requester_id` BIGINT(20) UNSIGNED NOT NULL COMMENT '请求者用户ID',
-  `status` ENUM('pending', 'accepted', 'rejected', 'completed', 'cancelled') NOT NULL DEFAULT 'pending' COMMENT '状态：pending-待处理，accepted-已接受，rejected-已拒绝，completed-已完成，cancelled-已取消',
+  `status` ENUM('pending', 'accepted', 'in_progress', 'rejected', 'completed', 'cancelled') NOT NULL DEFAULT 'pending' COMMENT '状态：pending-待处理，accepted-已接受，in_progress-进行中，rejected-已拒绝，completed-已完成，cancelled-已取消',
   `price` INT(11) NOT NULL COMMENT '交易价格（时间币）',
   `scheduled_time` DATETIME DEFAULT NULL COMMENT '预约时间',
   `actual_time` DATETIME DEFAULT NULL COMMENT '实际完成时间',
