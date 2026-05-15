@@ -125,12 +125,20 @@ public class CoinServiceImpl implements CoinService {
     public int getConsecutiveDays(Long userId) {
         List<CoinLog> logs = coinLogMapper.selectByUserIdAndType(userId, "income");
 
-        // 从最近的日期开始查找
-        LocalDateTime checkDate = LocalDateTime.now().minusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-        int consecutive = 0;
+        // 首先检查今天是否签到
+        boolean todaySigned = checkTodaySigned(userId);
+        
+        // 如果今天没签到，连续签到天数为0（因为断签了）
+        if (!todaySigned) {
+            return 0;
+        }
 
-        // 倒序遍历日志，从最新的记录开始
-        for (int i = logs.size() - 1; i >= 0; i--) {
+        // 从昨天开始检查，计算之前连续签到了多少天
+        LocalDateTime checkDate = LocalDateTime.now().minusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        int consecutive = 1; // 今天已经签到，至少1天
+
+        // 正序遍历日志（数据库已经按 create_time DESC 排序，所以 logs.get(0) 是最新的）
+        for (int i = 0; i < logs.size(); i++) {
             CoinLog log = logs.get(i);
             // 只计算签到记录
             if (log.getDescription() != null && log.getDescription().contains("签到")) {
@@ -139,7 +147,7 @@ public class CoinServiceImpl implements CoinService {
                     consecutive++;
                     checkDate = checkDate.minusDays(1);
                 } else if (log.getCreateTime().isBefore(checkDate)) {
-                    // 如果记录比检查日期早，说明断连续签到中断
+                    // 如果记录比检查日期早，说明连续签到中断
                     break;
                 }
             }
