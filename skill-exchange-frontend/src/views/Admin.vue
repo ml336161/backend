@@ -255,10 +255,10 @@
             <el-table-column label="操作" width="200" fixed="right">
               <template #default="{ row }">
                 <div v-if="row.status === 'pending'">
-                  <el-button type="success" size="small" link @click="handleReport(row.id, 'approved')">
+                  <el-button type="success" size="small" link @click="submitReport(row.id, 'approved')">
                     通过
                   </el-button>
-                  <el-button type="danger" size="small" link @click="handleReport(row.id, 'rejected')">
+                  <el-button type="danger" size="small" link @click="submitReport(row.id, 'rejected')">
                     驳回
                   </el-button>
                 </div>
@@ -563,7 +563,7 @@ const handleDeleteSkill = async (id) => {
   }
 }
 
-const handleReport = async (id, status) => {
+const submitReport = async (id, status) => {
   try {
     await handleReport({ id, status, handleResult: '' })
     ElMessage.success('处理成功')
