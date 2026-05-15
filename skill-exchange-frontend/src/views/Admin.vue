@@ -257,7 +257,7 @@
                     <el-link 
                       type="primary" 
                       style="cursor: pointer; white-space: nowrap;"
-                      @click="goToSkillDetail(row.targetSkill?.id)"
+                      @click="viewSkillDetail(row.targetSkill)"
                     >
                       {{ row.targetSkill?.title }}
                     </el-link>
@@ -559,8 +559,9 @@ const viewSkillDetail = (skill) => {
 }
 
 const goToSkillDetail = (skillId) => {
-  if (skillId) {
-    window.open(`/#/skills/${skillId}`, '_blank')
+  const skill = skills.value.find(s => s.id === skillId)
+  if (skill) {
+    viewSkillDetail(skill)
   }
 }
 
