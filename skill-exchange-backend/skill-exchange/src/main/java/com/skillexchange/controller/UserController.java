@@ -39,6 +39,12 @@ public class UserController {
         return Result.success();
     }
 
+    @GetMapping("/search")
+    public Result<UserVO> searchByUsername(@RequestParam String username) {
+        UserVO user = userService.getByUsername(username);
+        return Result.success(user);
+    }
+
     @GetMapping("/{id}")
     public Result<UserVO> getById(@PathVariable Long id) {
         UserVO user = userService.getById(id);
