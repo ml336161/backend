@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { getToken, setToken, removeToken, getUser, setUser } from '../utils/auth'
+import { getUserInfo } from '../api/user'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -34,6 +35,17 @@ export const useUserStore = defineStore('user', {
       this.user = null
       this.unreadCount = 0
       removeToken()
+    },
+    
+    async refreshUser() {
+      try {
+        const response = await getUserInfo()
+        this.setUser(response.data)
+        return response.data
+      } catch (error) {
+        console.error('Failed to refresh user:', error)
+        throw error
+      }
     }
   }
 })

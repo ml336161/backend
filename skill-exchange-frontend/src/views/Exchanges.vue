@@ -82,10 +82,12 @@ import Header from '../components/Header.vue'
 import { getReceivedExchanges, getSentExchanges, handleExchange } from '../api/exchange'
 import { formatDateTime } from '../utils/format'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '../store/user'
 
 const activeTab = ref('received')
 const receivedExchanges = ref([])
 const sentExchanges = ref([])
+const userStore = useUserStore()
 
 const loadReceived = async () => {
   try {
@@ -140,6 +142,7 @@ const handleAccept = async (id) => {
     await ElMessageBox.confirm('确定接受该申请吗？', '提示')
     await handleExchange({ id, action: 'accept' })
     ElMessage.success('已接受申请')
+    await userStore.refreshUser()
     await loadReceived()
   } catch (err) {
     console.error(err)

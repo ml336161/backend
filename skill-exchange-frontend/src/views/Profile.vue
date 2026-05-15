@@ -305,6 +305,7 @@ const handleSignIn = async () => {
     consecutiveDays.value += 1
     ElMessage.success('签到成功，获得1时间币')
     
+    await userStore.refreshUser()
     await loadProfile()
     await loadProfileStats()
     
@@ -332,6 +333,7 @@ const handleUpdate = async () => {
     })
     ElMessage.success('更新成功')
     editDialogVisible.value = false
+    await userStore.refreshUser()
     await loadProfile()
   } catch (err) {
     console.error(err)

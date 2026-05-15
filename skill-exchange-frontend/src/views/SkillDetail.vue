@@ -284,6 +284,7 @@ const submitApply = async () => {
       remark: applyForm.value.remark
     })
     ElMessage.success('申请已提交')
+    await userStore.refreshUser()
     applyDialogVisible.value = false
     appointmentDateTime.value = null  // 重置日期选择
   } catch (err) {

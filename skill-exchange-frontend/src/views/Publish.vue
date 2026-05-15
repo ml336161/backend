@@ -121,6 +121,7 @@ const handleSubmit = async () => {
   try {
     await createSkill(form)
     ElMessage.success('发布成功')
+    await userStore.refreshUser()
     router.push('/skills')
   } catch (err) {
     console.error(err)
