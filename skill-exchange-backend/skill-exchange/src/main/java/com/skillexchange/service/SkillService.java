@@ -20,7 +20,7 @@ public interface SkillService {
 
     SkillVO getByIdWithUser(Long id);
 
-    SkillListResponse list(Integer pageNum, Integer pageSize, Long typeId, String keyword);
+    SkillListResponse list(Integer pageNum, Integer pageSize, Long typeId, String keyword, Integer minPrice, Integer maxPrice);
 
     List<SkillVO> listByUserId(Long userId);
 

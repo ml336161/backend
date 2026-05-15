@@ -48,8 +48,10 @@ public class SkillController {
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) Long typeId,
-            @RequestParam(required = false) String keyword) {
-        SkillListResponse response = skillService.list(pageNum, pageSize, typeId, keyword);
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice) {
+        SkillListResponse response = skillService.list(pageNum, pageSize, typeId, keyword, minPrice, maxPrice);
         return Result.success(response);
     }
 

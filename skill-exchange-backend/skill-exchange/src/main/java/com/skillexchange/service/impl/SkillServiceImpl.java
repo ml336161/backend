@@ -141,10 +141,10 @@ public class SkillServiceImpl implements SkillService {
     }
 
     @Override
-    public SkillListResponse list(Integer pageNum, Integer pageSize, Long typeId, String keyword) {
+    public SkillListResponse list(Integer pageNum, Integer pageSize, Long typeId, String keyword, Integer minPrice, Integer maxPrice) {
         int offset = (pageNum - 1) * pageSize;
-        List<Skill> skills = skillMapper.selectPage(typeId, keyword, offset, pageSize);
-        Long total = (long) skillMapper.countPage(typeId, keyword);
+        List<Skill> skills = skillMapper.selectPage(typeId, keyword, minPrice, maxPrice, offset, pageSize);
+        Long total = (long) skillMapper.countPage(typeId, keyword, minPrice, maxPrice);
 
         SkillListResponse response = new SkillListResponse();
         response.setList(skills.stream()

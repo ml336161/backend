@@ -26,9 +26,11 @@ public interface SkillMapper {
     List<Skill> selectByKeyword(@Param("keyword") String keyword);
 
     List<Skill> selectPage(@Param("typeId") Long typeId, @Param("keyword") String keyword,
+                           @Param("minPrice") Integer minPrice, @Param("maxPrice") Integer maxPrice,
                            @Param("offset") Integer offset, @Param("limit") Integer limit);
 
-    int countPage(@Param("typeId") Long typeId, @Param("keyword") String keyword);
+    int countPage(@Param("typeId") Long typeId, @Param("keyword") String keyword,
+                  @Param("minPrice") Integer minPrice, @Param("maxPrice") Integer maxPrice);
 
     int countByUserId(Long userId);
 
