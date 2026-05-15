@@ -178,10 +178,10 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+        if (!request.getOldPassword().equals(user.getPassword())) {
             throw new BusinessException("旧密码错误");
         }
-        userMapper.updatePassword(userId, passwordEncoder.encode(request.getNewPassword()));
+        userMapper.updatePassword(userId, request.getNewPassword());
     }
 
     @Override
