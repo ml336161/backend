@@ -14,7 +14,9 @@
                    class="chat-item"
                    :class="{ active: selectedUserId === friend.friendUserId }"
                    @click="selectChat(friend.friendUserId)">
-                <el-avatar :src="friend.friendUser?.avatar">
+                <el-avatar :src="friend.friendUser?.avatar"
+                          @click.stop="goToFriendProfile(friend.friendUserId)"
+                          class="clickable-avatar">
                   {{ friend.friendUser?.nickname?.charAt(0) }}
                 </el-avatar>
                 <div class="chat-info">
