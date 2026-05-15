@@ -47,13 +47,10 @@
             list-type="picture-card"
             :on-success="handleUploadSuccess"
             :on-remove="handleUploadRemove"
-            :on-exceed="handleExceed"
             :file-list="fileList"
-            :limit="1"
+            :limit="9"
           >
-            <div v-if="!hasImage">
-              <el-icon><Plus /></el-icon>
-            </div>
+            <el-icon><Plus /></el-icon>
           </el-upload>
         </el-form-item>
         
@@ -69,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
 import Header from '../components/Header.vue'
@@ -85,10 +82,6 @@ const loading = ref(false)
 const types = ref([])
 const fileList = ref([])
 const token = localStorage.getItem('token')
-
-const hasImage = computed(() => {
-  return fileList.value.length > 0
-})
 
 const form = reactive({
   typeId: null,
@@ -116,17 +109,20 @@ const loadTypes = async () => {
 }
 
 const handleUploadSuccess = (res) => {
-  form.images = res.data
-  fileList.value = [{ url: res.data }]
+  fileList.value.push({ url: res.data })
+  // 保存多个图片URL，用逗号分隔
+  const urls = fileList.value.map(file => file.url)
+  form.images = urls.join(',')
 }
 
-const handleUploadRemove = () => {
-  form.images = ''
-  fileList.value = []
-}
-
-const handleExceed = () => {
-  ElMessage.warning('只能上传一张封面图片')
+const handleUploadRemove = (file) => {
+  const index = fileList.value.findIndex(f => f.url === file.url)
+  if (index > -1) {
+    fileList.value.splice(index, 1)
+  }
+  // 更新保存的图片URL
+  const urls = fileList.value.map(file => file.url)
+  form.images = urls.join(',')
 }
 
 const handleSubmit = async () => {
