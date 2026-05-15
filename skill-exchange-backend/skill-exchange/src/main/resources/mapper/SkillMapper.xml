@@ -76,7 +76,7 @@
         <if test="typeId != null">AND type_id = #{typeId}</if>
         <if test="keyword != null and keyword != ''">AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))</if>
         <if test="minPrice != null">AND price >= #{minPrice}</if>
-        <if test="maxPrice != null">AND price <= #{maxPrice}</if>
+        <if test="maxPrice != null">AND price &lt;= #{maxPrice}</if>
         ORDER BY create_time DESC
         LIMIT #{offset}, #{limit}
     </select>
@@ -86,7 +86,7 @@
         <if test="typeId != null">AND type_id = #{typeId}</if>
         <if test="keyword != null and keyword != ''">AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))</if>
         <if test="minPrice != null">AND price >= #{minPrice}</if>
-        <if test="maxPrice != null">AND price <= #{maxPrice}</if>
+        <if test="maxPrice != null">AND price &lt;= #{maxPrice}</if>
     </select>
 
     <select id="countByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
