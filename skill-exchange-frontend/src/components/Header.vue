@@ -17,6 +17,7 @@
         <el-menu-item index="/skills">技能大厅</el-menu-item>
         <el-menu-item v-if="userStore.isLoggedIn" index="/publish">发布技能</el-menu-item>
         <el-menu-item v-if="userStore.isLoggedIn" index="/exchanges">技能交换</el-menu-item>
+        <el-menu-item v-if="userStore.isLoggedIn" index="/feedback">意见反馈</el-menu-item>
         <el-menu-item v-if="userStore.isLoggedIn && userStore.isAdmin" index="/admin">管理后台</el-menu-item>
       </el-menu>
       
